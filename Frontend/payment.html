@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Advance Payment | SSV HOTEL</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/style.css">
+
+<link rel="stylesheet" href="css/payment.css">
+
+</head>
+
+<body>
+
+<header>
+
+<div class="container">
+
+<nav>
+
+<div class="logo">
+
+🍽️ SSV HOTEL
+
+</div>
+
+<ul class="nav-links">
+
+<li><a href="index.html">Home</a></li>
+
+<li><a href="order.html">Order</a></li>
+
+<li><a href="#" class="active">Payment</a></li>
+
+</ul>
+
+</nav>
+
+</div>
+
+</header>
+
+<section class="payment-section">
+
+<div class="container">
+
+<div class="section-title">
+
+<h2>Advance Payment</h2>
+
+<p>
+
+Pay only <strong>50%</strong> now to confirm your order.
+
+</p>
+
+</div>
+
+<div class="payment-container">
+
+<div class="payment-card">
+
+<h3>Order Summary</h3>
+
+<div class="payment-row">
+
+<span>Name</span>
+
+<strong id="payName">-</strong>
+
+</div>
+
+<div class="payment-row">
+
+<span>Mobile</span>
+
+<strong id="payMobile">-</strong>
+
+</div>
+
+<div class="payment-row">
+
+<span>Rotis</span>
+
+<strong id="payQuantity">-</strong>
+
+</div>
+
+<div class="payment-row">
+
+<span>Total Amount</span>
+
+<strong id="payTotal">₹0</strong>
+
+</div>
+
+<div class="payment-row">
+
+<span>Advance (50%)</span>
+
+<strong id="payAdvance">₹0</strong>
+
+</div>
+
+<hr>
+<!-- ================= PAYMENT METHODS ================= -->
+
+<h3 class="payment-title">
+
+Choose Payment Method
+
+</h3>
+
+<div class="payment-methods">
+
+<label class="payment-option">
+
+<input
+type="radio"
+name="paymentMethod"
+value="upi"
+checked>
+
+<span>📱 UPI Payment</span>
+
+</label>
+
+<label class="payment-option">
+
+<input
+type="radio"
+name="paymentMethod"
+value="gpay">
+
+<span>🟢 Google Pay</span>
+
+</label>
+
+<label class="payment-option">
+
+<input
+type="radio"
+name="paymentMethod"
+value="phonepe">
+
+<span>🟣 PhonePe</span>
+
+</label>
+
+<label class="payment-option">
+
+<input
+type="radio"
+name="paymentMethod"
+value="paytm">
+
+<span>🔵 Paytm</span>
+
+</label>
+
+</div>
+
+<!-- ================= QR CODE ================= -->
+
+<div class="qr-section">
+
+<h4>Scan & Pay</h4>
+
+<img
+src="images/payment-qr.png"
+alt="SSV HOTEL UPI QR Code"
+class="qr-image">
+
+<p class="upi-id">
+
+UPI ID:
+<strong>ssvhotel@upi</strong>
+
+</p>
+
+<p class="payment-note">
+
+Pay the <strong>50% advance</strong> using any UPI app.
+
+</p>
+
+</div>
+
+<!-- ================= PAYMENT BUTTONS ================= -->
+
+<div class="payment-buttons">
+
+<button
+type="button"
+id="payNowBtn"
+class="btn-primary">
+
+💳 Pay Advance Now
+
+</button>
+
+<a
+href="order.html"
+class="btn-secondary">
+
+← Back to Order
+
+</a>
+
+</div>
+
+</div>
+
+<!-- ================= SECURITY CARD ================= -->
+
+<div class="security-card">
+
+<h3>🔒 Secure Payment</h3>
+
+<ul>
+
+<li>✅ 100% Secure UPI Payment</li>
+
+<li>✅ Instant Order Confirmation</li>
+
+<li>✅ Encrypted Transaction</li>
+
+<li>✅ Pickup After Payment</li>
+
+<li>✅ Remaining Amount Pay at Hotel</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+    <div class="container footer-content">
+
+        <div>
+
+            <h2>🍽️ SSV HOTEL</h2>
+
+            <p>
+                Smart Hotel Pre-Order & Pickup System
+            </p>
+
+        </div>
+
+        <div>
+
+            <h4>Quick Links</h4>
+
+            <ul>
+
+                <li><a href="index.html">Home</a></li>
+
+                <li><a href="order.html">Order</a></li>
+
+                <li><a href="track.html">Track Order</a></li>
+
+                <li><a href="contact.html">Contact</a></li>
+
+            </ul>
+
+        </div>
+
+        <div>
+
+            <h4>Contact</h4>
+
+            <p>📞 +91 9876543210</p>
+
+            <p>📧 info@ssvhotel.com</p>
+
+            <p>📍 Your Hotel Address</p>
+
+        </div>
+
+    </div>
+
+    <div class="copyright">
+
+        © 2026 SSV HOTEL. All Rights Reserved.
+
+    </div>
+
+</footer>
+
+<!-- JavaScript -->
+
+<script src="js/payment.js"></script>
+
+</body>
+
+</html>

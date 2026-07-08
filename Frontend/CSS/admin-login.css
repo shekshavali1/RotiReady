@@ -1,0 +1,201 @@
+/* ===================================
+   SSV HOTEL - ADMIN LOGIN
+=================================== */
+
+.admin-login-section{
+
+    min-height:85vh;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:80px 20px;
+
+    background:#f5f7fb;
+
+}
+
+.admin-login-card{
+
+    width:100%;
+
+    max-width:450px;
+
+    background:#fff;
+
+    padding:40px;
+
+    border-radius:18px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.12);
+
+    text-align:center;
+
+}
+
+.admin-login-card h2{
+
+    font-size:32px;
+
+    color:#1f2937;
+
+    margin-bottom:10px;
+
+}
+
+.admin-login-card p{
+
+    color:#6b7280;
+
+    margin-bottom:30px;
+
+    font-size:15px;
+
+}
+/* ===================================
+   FORM
+=================================== */
+
+.admin-login-card .form-group{
+
+    text-align:left;
+
+    margin-bottom:20px;
+
+}
+
+.admin-login-card label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    font-weight:600;
+
+    color:#374151;
+
+}
+
+.admin-login-card input{
+
+    width:100%;
+
+    padding:14px 16px;
+
+    border:1px solid #d1d5db;
+
+    border-radius:10px;
+
+    font-size:15px;
+
+    outline:none;
+
+    transition:.3s;
+
+}
+
+.admin-login-card input:focus{
+
+    border-color:#2563eb;
+
+    box-shadow:0 0 8px rgba(37,99,235,.2);
+
+}
+
+.admin-login-card .btn-primary{
+
+    width:100%;
+
+    padding:15px;
+
+    border:none;
+
+    border-radius:10px;
+
+    font-size:17px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    margin-top:10px;
+
+    transition:.3s;
+
+}
+
+.admin-login-card .btn-primary:hover{
+
+    transform:translateY(-2px);
+
+}
+/* ===================================
+   LOGIN MESSAGE
+=================================== */
+
+.login-message{
+
+    margin-top:30px;
+
+    padding:20px;
+
+    background:#f8fafc;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:10px;
+
+}
+
+.login-message p{
+
+    margin:8px 0;
+
+    color:#374151;
+
+    font-size:14px;
+
+}
+
+.login-message strong{
+
+    color:#111827;
+
+}
+
+/* ===================================
+   RESPONSIVE
+=================================== */
+
+@media(max-width:768px){
+
+    .admin-login-card{
+
+        padding:30px 20px;
+
+    }
+
+    .admin-login-card h2{
+
+        font-size:26px;
+
+    }
+
+    .admin-login-card input{
+
+        padding:12px;
+
+    }
+
+    .admin-login-card .btn-primary{
+
+        padding:13px;
+
+        font-size:16px;
+
+    }
+
+}

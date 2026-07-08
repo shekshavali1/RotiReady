@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Track Order | SSV HOTEL</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/style.css">
+
+<link rel="stylesheet" href="css/track.css">
+
+</head>
+
+<body>
+
+<header>
+
+<div class="container">
+
+<nav>
+
+<div class="logo">
+
+🍽️ SSV HOTEL
+
+</div>
+
+<ul class="nav-links">
+
+<li><a href="index.html">Home</a></li>
+
+<li><a href="order.html">Order</a></li>
+
+<li><a href="track.html" class="active">Track</a></li>
+
+<li><a href="contact.html">Contact</a></li>
+
+</ul>
+
+</nav>
+
+</div>
+
+</header>
+
+<section class="track-section">
+
+<div class="container">
+
+<div class="section-title">
+
+<h2>Track Your Order</h2>
+
+<p>
+
+Enter your Order ID to check the current status of your order.
+
+</p>
+
+</div>
+
+<div class="track-card">
+
+<form id="trackForm">
+
+    <div class="form-group">
+
+        <label>Order ID</label>
+
+        <input
+            type="text"
+            id="orderID"
+            placeholder="Example: SSV483921">
+
+    </div>
+
+    <div class="form-group">
+
+        <label>Mobile Number</label>
+
+        <input
+            type="text"
+            id="mobile"
+            placeholder="Enter Mobile Number">
+
+    </div>
+
+    <button
+        id="trackBtn"
+        class="btn-primary">
+
+        🔍 Track Order
+
+    </button>
+
+</form>
+<div
+id="resultCard"
+class="track-result"
+style="display:none;">
+
+<hr>
+
+<div class="track-row">
+
+<span>Order ID</span>
+
+<strong id="showOrderID"></strong>
+
+</div>
+
+<div class="track-row">
+
+<span>Customer</span>
+
+<strong id="showCustomer"></strong>
+
+</div>
+
+<div class="track-row">
+
+<span>Status</span>
+
+<strong id="showStatus"></strong>
+
+</div>
+
+<div class="track-row">
+
+<span>Pickup Date</span>
+
+<strong id="showDate"></strong>
+
+</div>
+
+<div class="track-row">
+
+<span>Pickup Time</span>
+
+<strong id="showTime"></strong>
+
+</div>
+                <hr>
+
+                <!-- ================= ORDER TIMELINE ================= -->
+
+                <div class="timeline">
+
+                    <div class="timeline-item active">
+
+                        <div class="timeline-icon">📝</div>
+
+                        <div class="timeline-content">
+
+                            <h4>Order Confirmed</h4>
+
+                            <p>Your order has been successfully placed.</p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="timeline-item" id="preparingStep">
+
+                        <div class="timeline-icon">👨‍🍳</div>
+
+                        <div class="timeline-content">
+
+                            <h4>Preparing</h4>
+
+                            <p>SSV HOTEL is preparing your fresh rotis.</p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="timeline-item" id="readyStep">
+
+                        <div class="timeline-icon">✅</div>
+
+                        <div class="timeline-content">
+
+                            <h4>Ready for Pickup</h4>
+
+                            <p>Your order is ready. Please visit the hotel.</p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="timeline-item" id="completedStep">
+
+                        <div class="timeline-icon">🎉</div>
+
+                        <div class="timeline-content">
+
+                            <h4>Order Completed</h4>
+
+                            <p>Thank you for choosing SSV HOTEL.</p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="track-buttons">
+
+                <a href="index.html" class="btn-secondary">
+
+                    🏠 Back to Home
+
+                </a>
+
+                <a href="order.html" class="btn-primary">
+
+                    🍽️ Order Again
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+    <div class="container footer-content">
+
+        <div>
+
+            <h2>🍽️ SSV HOTEL</h2>
+
+            <p>Smart Hotel Pre-Order & Pickup System</p>
+
+        </div>
+
+        <div>
+
+            <h4>Quick Links</h4>
+
+            <ul>
+
+                <li><a href="index.html">Home</a></li>
+
+                <li><a href="order.html">Order</a></li>
+
+                <li><a href="track.html">Track Order</a></li>
+
+                <li><a href="contact.html">Contact</a></li>
+
+            </ul>
+
+        </div>
+
+        <div>
+
+            <h4>Contact</h4>
+
+            <p>📞 +91 9876543210</p>
+
+            <p>📧 info@ssvhotel.com</p>
+
+            <p>📍 Your Hotel Address</p>
+
+        </div>
+
+    </div>
+
+    <div class="copyright">
+
+        © 2026 SSV HOTEL. All Rights Reserved.
+
+    </div>
+
+</footer>
+
+<script src="js/track.js"></script>
+
+</body>
+
+</html>

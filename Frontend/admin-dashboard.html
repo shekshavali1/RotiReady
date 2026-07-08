@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Dashboard | SSV HOTEL</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="CSS/style.css">
+
+<link rel="stylesheet" href="CSS/admin-dashboard.css">
+
+</head>
+
+<body>
+
+<header>
+
+<div class="container">
+
+<nav>
+
+<div class="logo">
+
+🍽️ SSV HOTEL ADMIN
+
+</div>
+
+<ul class="nav-links">
+
+<li><a href="admin-dashboard.html">Dashboard</a></li>
+
+<li><a href="order.html">New Order</a></li>
+
+<li><a href="#" id="logoutBtn">Logout</a></li>
+
+</ul>
+
+</nav>
+
+</div>
+
+</header>
+
+<section class="dashboard-section">
+
+<div class="container">
+
+<h2 class="dashboard-title">
+
+Hotel Admin Dashboard
+
+</h2>
+
+<p class="dashboard-subtitle">
+
+Manage customer orders, payments and order status.
+
+</p>
+<!-- ================= DASHBOARD CARDS ================= -->
+
+<div class="dashboard-cards">
+
+    <div class="dashboard-card">
+
+        <h3 id="totalOrders">0</h3>
+
+        <p>Total Orders</p>
+
+    </div>
+
+    <div class="dashboard-card">
+
+        <h3 id="todayOrders">0</h3>
+
+        <p>Today's Orders</p>
+
+    </div>
+
+    <div class="dashboard-card">
+
+        <h3 id="totalRevenue">₹0</h3>
+
+        <p>Total Revenue</p>
+
+    </div>
+
+    <div class="dashboard-card">
+
+        <h3 id="pendingOrders">0</h3>
+
+        <p>Pending Orders</p>
+
+    </div>
+
+</div>
+
+<!-- ==========================================
+DASHBOARD CHARTS
+========================================== -->
+
+<div class="chart-grid">
+
+    <div class="chart-card">
+
+        <h2>📊 Order Analytics</h2>
+
+        <canvas id="ordersChart"></canvas>
+
+    </div>
+
+    <div class="chart-card">
+
+        <h2>💰 Revenue Analytics</h2>
+
+        <canvas id="revenueChart"></canvas>
+
+    </div>
+
+</div>
+
+
+
+<!-- ================= SEARCH ================= -->
+
+<div class="dashboard-toolbar">
+
+    <input
+        type="text"
+        id="searchOrder"
+        placeholder="🔍 Search by Order ID or Mobile Number">
+
+    <button
+        type="button"
+        class="btn-primary"
+        id="refreshBtn">
+
+        🔄 Refresh
+
+    </button>
+    <button id="exportExcelBtn" class="action-btn">
+
+📊 Export Excel
+
+</button>
+<button id="exportPdfBtn" class="action-btn">
+
+📄 Export PDF
+
+</button>
+
+</div>
+<select id="statusFilter">
+
+    <option value="All">All Orders</option>
+
+    <option value="Preparing">Preparing</option>
+
+    <option value="Ready">Ready</option>
+
+    <option value="Completed">Completed</option>
+
+</select>
+<input
+    type="date"
+    id="dateFilter">
+<!-- ================= ORDERS TABLE ================= -->
+
+<div class="table-container">
+
+    <table id="ordersTable">
+
+        <thead>
+
+            <tr>
+
+                <th>Order ID</th>
+
+                <th>Customer</th>
+
+                <th>Mobile</th>
+
+                <th>Quantity</th>
+
+                <th>Total</th>
+
+                <th>Advance</th>
+
+                <th>Remaining</th>
+
+                <th>Pickup</th>
+
+                <th>Payment</th>
+
+                <th>Status</th>
+
+                <th>Action</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody id="ordersBody">
+
+            <tr>
+
+                <td colspan="11" style="text-align:center; padding:30px;">
+
+                    No Orders Found
+
+                </td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<!-- ================= LOGOUT MODAL ================= -->
+
+<div id="logoutModal" class="logout-modal">
+
+    <div class="logout-content">
+
+        <h3>Logout</h3>
+
+        <p>Are you sure you want to logout?</p>
+
+        <div class="logout-buttons">
+
+            <button id="confirmLogout" class="btn-primary">
+
+                Yes, Logout
+
+            </button>
+
+            <button id="cancelLogout" class="btn-secondary">
+
+                Cancel
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+</div>
+
+</section>
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+    <div class="container footer-content">
+
+        <div>
+
+            <h2>🍽️ SSV HOTEL</h2>
+
+            <p>
+
+                Smart Hotel Pre-Order & Pickup System
+
+            </p>
+
+        </div>
+
+        <div>
+
+            <h4>Quick Links</h4>
+
+            <ul>
+
+                <li><a href="index.html">Home</a></li>
+
+                <li><a href="order.html">Order</a></li>
+
+                <li><a href="track.html">Track Order</a></li>
+
+                <li><a href="contact.html">Contact</a></li>
+
+            </ul>
+
+        </div>
+
+        <div>
+
+            <h4>Admin</h4>
+
+            <p>👤 Username : admin</p>
+
+            <p>🏨 SSV HOTEL Dashboard</p>
+
+            <p>📍 Hotel Management System</p>
+
+        </div>
+
+    </div>
+
+    <div class="copyright">
+
+        © 2026 SSV HOTEL. All Rights Reserved.
+
+    </div>
+
+</footer>
+
+<!-- ================= JAVASCRIPT ================= -->
+ 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="js/admin-dashboard.js"></script>
+
+</body>
+
+</html>

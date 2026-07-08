@@ -1,0 +1,259 @@
+/* ==========================================
+   RECEIPT PAGE
+========================================== */
+
+.receipt-section{
+    background:#f5f7fb;
+    min-height:100vh;
+    padding:90px 0;
+}
+
+.receipt-card{
+    max-width:750px;
+    margin:auto;
+    background:#ffffff;
+    border-radius:20px;
+    padding:45px;
+    box-shadow:0 15px 40px rgba(0,0,0,.08);
+    animation:fadeIn .8s ease;
+}
+
+.success-icon{
+    width:90px;
+    height:90px;
+    margin:auto;
+    background:#22c55e;
+    color:#fff;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:40px;
+    margin-bottom:20px;
+}
+
+.receipt-card h2{
+    text-align:center;
+    font-size:36px;
+    color:#222831;
+}
+
+.receipt-card p{
+    text-align:center;
+    color:#777;
+    margin:12px 0 25px;
+}
+
+.receipt-card hr{
+    border:none;
+    border-top:1px solid #ececec;
+    margin:25px 0;
+}
+
+/* ==========================================
+   RECEIPT DETAILS
+========================================== */
+
+.receipt-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:16px 0;
+    border-bottom:1px solid #f1f1f1;
+}
+
+.receipt-row span{
+    color:#666;
+    font-size:16px;
+}
+
+.receipt-row strong{
+    color:#222831;
+    font-size:17px;
+}
+
+/* ==========================================
+   QR SECTION
+========================================== */
+
+.receipt-qr{
+    margin-top:35px;
+    text-align:center;
+}
+
+.receipt-qr h3{
+    color:#222831;
+    margin-bottom:20px;
+}
+
+.receipt-qr-image{
+    width:220px;
+    height:220px;
+    object-fit:cover;
+    margin:auto;
+    border-radius:12px;
+    padding:10px;
+    background:#fff;
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+}
+
+.receipt-qr p{
+    margin-top:20px;
+    line-height:1.7;
+}
+/* ==========================================
+   RECEIPT BUTTONS
+========================================== */
+
+.receipt-buttons{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
+    margin-top:40px;
+}
+
+.receipt-buttons .btn-primary,
+.receipt-buttons .btn-secondary{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:100%;
+    padding:16px;
+    font-size:16px;
+    text-decoration:none;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.receipt-buttons .btn-primary{
+    background:#ff6b35;
+    color:#fff;
+}
+
+.receipt-buttons .btn-primary:hover{
+    background:#e85b29;
+    transform:translateY(-3px);
+}
+
+.receipt-buttons .btn-secondary{
+    background:#f3f3f3;
+    color:#222831;
+    border:1px solid #ddd;
+}
+
+.receipt-buttons .btn-secondary:hover{
+    background:#e9e9e9;
+    transform:translateY(-3px);
+}
+
+/* ==========================================
+   ANIMATION
+========================================== */
+
+@keyframes fadeIn{
+
+    from{
+        opacity:0;
+        transform:translateY(40px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}
+
+/* ==========================================
+   TABLET
+========================================== */
+
+@media(max-width:992px){
+
+    .receipt-card{
+        padding:35px;
+    }
+
+}
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media(max-width:768px){
+
+    .receipt-section{
+        padding:60px 0;
+    }
+
+    .receipt-card{
+        padding:25px;
+    }
+
+    .receipt-card h2{
+        font-size:30px;
+    }
+
+    .receipt-row{
+        font-size:15px;
+    }
+
+    .receipt-row strong{
+        font-size:15px;
+    }
+
+    .receipt-qr-image{
+        width:180px;
+        height:180px;
+    }
+
+    .receipt-buttons{
+        grid-template-columns:1fr;
+    }
+
+}
+
+/* ==========================================
+   SMALL MOBILE
+========================================== */
+
+@media(max-width:480px){
+
+    .receipt-card{
+        padding:20px;
+    }
+
+    .success-icon{
+        width:70px;
+        height:70px;
+        font-size:30px;
+    }
+
+    .receipt-card h2{
+        font-size:26px;
+    }
+
+    .receipt-row{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:8px;
+    }
+
+    .receipt-qr-image{
+        width:150px;
+        height:150px;
+    }
+
+    .receipt-buttons .btn-primary,
+    .receipt-buttons .btn-secondary{
+        padding:14px;
+        font-size:15px;
+    }
+
+}
+
+/* ==========================================
+   END OF RECEIPT CSS
+========================================== */

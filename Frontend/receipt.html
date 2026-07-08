@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Receipt | SSV HOTEL</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/style.css">
+
+<link rel="stylesheet" href="css/receipt.css">
+
+</head>
+
+<body>
+
+<header>
+
+<div class="container">
+
+<nav>
+
+<div class="logo">
+🍽️ SSV HOTEL
+</div>
+
+<ul class="nav-links">
+
+<li><a href="index.html">Home</a></li>
+
+<li><a href="order.html">Order</a></li>
+
+<li><a href="track.html">Track</a></li>
+
+</ul>
+
+</nav>
+
+</div>
+
+</header>
+
+<section class="receipt-section">
+
+<div class="container">
+
+<div class="receipt-card">
+
+<div class="success-icon">
+
+✅
+
+</div>
+
+<h2>
+
+Payment Successful
+
+</h2>
+
+<p>
+
+Your order has been confirmed.
+
+</p>
+
+<hr>
+
+<div class="receipt-row">
+
+<span>Order ID</span>
+
+<strong id="receiptOrderID"></strong>
+
+</div>
+
+<div class="receipt-row">
+
+<span>Customer</span>
+
+<strong id="receiptName"></strong>
+
+</div>
+
+<div class="receipt-row">
+
+<span>Mobile</span>
+
+<strong id="receiptMobile"></strong>
+
+</div>
+
+<div class="receipt-row">
+
+<span>Rotis</span>
+
+<strong id="receiptQuantity"></strong>
+
+</div>
+
+<div class="receipt-row">
+
+<span>Total Amount</span>
+
+<strong id="receiptTotal"></strong>
+
+</div>
+
+<div class="receipt-row">
+
+<span>Advance Paid</span>
+
+<strong id="receiptAdvance"></strong>
+
+</div>
+
+<div class="receipt-row">
+
+<span>Remaining Amount</span>
+
+<strong id="receiptRemaining"></strong>
+
+</div>
+
+<div class="receipt-row">
+
+<span>Pickup Date</span>
+
+<strong id="receiptDate"></strong>
+
+</div>
+
+<div class="receipt-row">
+
+<span>Pickup Time</span>
+
+<strong id="receiptTime"></strong>
+
+</div>
+
+<div class="receipt-row">
+
+<span>Order Status</span>
+
+<strong id="receiptStatus"></strong>
+
+
+</div>
+<div class="receipt-row">
+
+    <span>Payment Status</span>
+
+    <strong id="receiptPaymentStatus"></strong>
+
+</div>
+
+<hr>
+<!-- ================= QR CODE ================= -->
+
+<div class="receipt-qr">
+
+    <h3>Pickup QR Code</h3>
+
+    <img
+    id="receiptQR"
+    src=""
+    alt="Order QR Code"
+    class="receipt-qr-image">
+
+    <p>
+
+        Show this QR Code at the SSV HOTEL counter while collecting your order.
+
+    </p>
+
+</div>
+
+<!-- ================= ACTION BUTTONS ================= -->
+
+<div class="receipt-buttons">
+
+    <button
+        type="button"
+        id="printBtn"
+        class="btn-primary">
+
+        🖨️ Print Receipt
+
+    </button>
+
+    <button
+        type="button"
+        id="downloadBtn"
+        class="btn-secondary">
+
+        📥 Download Receipt
+
+    </button>
+
+    <a
+        href="track.html"
+        class="btn-primary">
+
+        📦 Track Order
+
+    </a>
+
+    <a
+        href="index.html"
+        class="btn-secondary">
+
+        🏠 Back to Home
+
+    </a>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+    <div class="container footer-content">
+
+        <div>
+
+            <h2>🍽️ SSV HOTEL</h2>
+
+            <p>
+
+                Smart Hotel Pre-Order & Pickup System
+
+            </p>
+
+        </div>
+
+        <div>
+
+            <h4>Quick Links</h4>
+
+            <ul>
+
+                <li><a href="index.html">Home</a></li>
+
+                <li><a href="order.html">Order</a></li>
+
+                <li><a href="track.html">Track Order</a></li>
+
+                <li><a href="contact.html">Contact</a></li>
+
+            </ul>
+
+        </div>
+
+        <div>
+
+            <h4>Contact</h4>
+
+            <p>📞 +91 9876543210</p>
+
+            <p>📧 info@ssvhotel.com</p>
+
+            <p>📍 Your Hotel Address</p>
+
+        </div>
+
+    </div>
+
+    <div class="copyright">
+
+        © 2026 SSV HOTEL. All Rights Reserved.
+
+    </div>
+
+</footer>
+
+<!-- JavaScript -->
+
+<script src="js/receipt.js"></script>
+
+</body>
+
+</html>

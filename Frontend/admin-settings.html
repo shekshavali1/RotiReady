@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Settings | SSV HOTEL</title>
+
+<link rel="stylesheet" href="CSS/style.css">
+<link rel="stylesheet" href="CSS/admin-settings.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+<header>
+
+<div class="container">
+
+<nav>
+
+<div class="logo">
+🍽️ SSV HOTEL ADMIN
+</div>
+
+<ul class="nav-links">
+
+<li><a href="admin-dashboard.html">Dashboard</a></li>
+
+<li><a href="admin-settings.html" class="active">Settings</a></li>
+
+<li><a href="admin-login.html">Logout</a></li>
+
+</ul>
+
+</nav>
+
+</div>
+
+</header>
+
+<section class="settings-section">
+
+<div class="container">
+
+<h1 class="page-title">
+
+Hotel Settings
+
+</h1>
+
+<div class="settings-card">
+
+<div class="form-group">
+
+<label>Hotel Name</label>
+
+<input
+type="text"
+id="hotelName">
+
+</div>
+
+<div class="form-group">
+
+<label>Price Per Roti</label>
+
+<input
+type="number"
+id="pricePerRoti">
+
+</div>
+
+<div class="form-group">
+
+<label>UPI ID</label>
+
+<input
+type="text"
+id="upiID">
+
+</div>
+
+<div class="form-group">
+
+<label>Phone Number</label>
+
+<input
+type="text"
+id="phoneNumber">
+
+</div>
+
+<div class="form-group">
+
+<label>Hotel Address</label>
+
+<textarea
+id="hotelAddress"
+rows="3"></textarea>
+
+</div>
+
+<div class="form-group">
+
+<label>QR Code Image</label>
+<input type="file" id="qrImage" accept="image/*">
+</div>
+
+<div class="preview-box">
+
+<img id="qrPreview" src="" alt="QR Preview">
+
+</div>
+
+<button
+id="saveSettings"
+class="save-btn">
+
+💾 Save Settings
+
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+<script src="js/admin-settings.js"></script>
+
+</body>
+
+</html>

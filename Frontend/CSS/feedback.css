@@ -1,0 +1,251 @@
+/* ==========================================
+   SSV HOTEL - FEEDBACK PAGE
+========================================== */
+
+.feedback-section{
+
+    padding:70px 20px;
+
+    background:#f5f7fb;
+
+    min-height:80vh;
+
+}
+
+.feedback-card{
+
+    max-width:650px;
+
+    margin:auto;
+
+    background:#ffffff;
+
+    padding:40px;
+
+    border-radius:20px;
+
+    box-shadow:0 15px 40px rgba(0,0,0,.12);
+
+    text-align:center;
+
+}
+
+.success-icon{
+
+    font-size:60px;
+
+    margin-bottom:15px;
+
+}
+
+.feedback-card h2{
+
+    font-size:32px;
+
+    color:#222;
+
+    margin-bottom:10px;
+
+}
+
+.feedback-card p{
+
+    color:#666;
+
+    margin-bottom:20px;
+
+}
+
+.feedback-card hr{
+
+    margin:25px 0;
+
+    border:none;
+
+    border-top:1px solid #e5e5e5;
+
+}
+
+.order-details{
+
+    background:#f9fafc;
+
+    padding:18px;
+
+    border-radius:12px;
+
+    margin-bottom:25px;
+
+    text-align:left;
+
+}
+
+.order-details p{
+
+    margin:10px 0;
+
+    font-size:16px;
+
+}
+
+.rating-stars{
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:12px;
+
+    margin:30px 0;
+
+}
+
+.star{
+
+    font-size:48px;
+
+    color:#cccccc;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.star:hover{
+
+    transform:scale(1.2);
+
+}
+
+.star.active{
+
+    color:#ffb400;
+
+}
+
+#reviewText{
+
+    width:100%;
+
+    padding:15px;
+
+    border:2px solid #dddddd;
+
+    border-radius:12px;
+
+    resize:none;
+
+    font-size:16px;
+
+    outline:none;
+
+    margin-bottom:25px;
+
+    transition:.3s;
+
+}
+
+#reviewText:focus{
+
+    border-color:#ff9800;
+
+}
+
+.feedback-buttons{
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:15px;
+
+    flex-wrap:wrap;
+
+}
+
+.feedback-buttons .btn-primary,
+
+.feedback-buttons .btn-secondary{
+
+    padding:14px 28px;
+
+    border:none;
+
+    border-radius:10px;
+
+    font-size:16px;
+
+    cursor:pointer;
+
+    text-decoration:none;
+
+    transition:.3s;
+
+}
+
+.feedback-buttons .btn-primary{
+
+    background:#ff9800;
+
+    color:#fff;
+
+}
+
+.feedback-buttons .btn-primary:hover{
+
+    background:#f57c00;
+
+    transform:translateY(-3px);
+
+}
+
+.feedback-buttons .btn-secondary{
+
+    background:#e5e5e5;
+
+    color:#333;
+
+}
+
+.feedback-buttons .btn-secondary:hover{
+
+    background:#d5d5d5;
+
+}
+
+@media(max-width:768px){
+
+.feedback-card{
+
+    padding:25px;
+
+}
+
+.feedback-card h2{
+
+    font-size:26px;
+
+}
+
+.star{
+
+    font-size:38px;
+
+}
+
+.feedback-buttons{
+
+    flex-direction:column;
+
+}
+
+.feedback-buttons .btn-primary,
+
+.feedback-buttons .btn-secondary{
+
+    width:100%;
+
+}
+
+}

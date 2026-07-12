@@ -18,7 +18,8 @@
 <link rel="stylesheet" href="CSS/style.css">
 
 <link rel="stylesheet" href="CSS/admin-dashboard.css">
-
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 </head>
 
 <body>
@@ -29,19 +30,26 @@
 
 <nav>
 
+
 <div class="logo">
-
 🍽️ SSV HOTEL ADMIN
-
+<span id="liveOrdersBadge" class="badge">0</span>
 </div>
+
 
 <ul class="nav-links">
 
-<li><a href="admin-dashboard.html">Dashboard</a></li>
+    <li><a href="admin-dashboard.html">📊 Dashboard</a></li>
 
-<li><a href="order.html">New Order</a></li>
+    <li><a href="admin-settings.html">⚙️ Settings</a></li>
 
-<li><a href="#" id="logoutBtn">Logout</a></li>
+    <li><a href="admin-profile.html">👤 Profile</a></li>
+
+    <li><a href="order.html">🍽️ New Order</a></li>
+
+    <li><a href="daily-report.html">📊 Daily Report</a></li>
+
+    <li><a href="#" id="logoutBtn">🚪 Logout</a></li>
 
 </ul>
 
@@ -50,6 +58,7 @@
 </div>
 
 </header>
+<div id="notificationArea"></div>
 
 <section class="dashboard-section">
 
@@ -101,6 +110,30 @@ Manage customer orders, payments and order status.
         <p>Pending Orders</p>
 
     </div>
+    <div class="dashboard-card">
+    <h3 id="totalRotis">0</h3>
+    <p>Total Rotis Sold</p>
+</div>
+
+</div>
+
+<!-- HOTEL STATUS CARD -->
+
+<div class="dashboard-card">
+
+    <h3 id="hotelStatusText" style="color:green;">
+        🟢 OPEN
+    </h3>
+
+    <p>Hotel Status</p>
+
+    <button
+        id="toggleHotelBtn"
+        class="action-btn">
+
+        Close Hotel
+
+    </button>
 
 </div>
 
@@ -227,6 +260,50 @@ DASHBOARD CHARTS
 
 </div>
 
+<!-- ==========================================
+CUSTOMER FEEDBACK
+========================================== -->
+
+<div class="feedback-section">
+
+<h2>
+
+⭐ Customer Reviews
+
+</h2>
+
+<div class="feedback-summary">
+
+<div class="dashboard-card">
+
+<h3 id="averageRating">0.0 ⭐</h3>
+
+<p>Average Rating</p>
+
+</div>
+
+<div class="dashboard-card">
+
+<h3 id="totalReviews">0</h3>
+
+<p>Total Reviews</p>
+
+</div>
+
+</div>
+
+<div id="feedbackContainer">
+
+<p style="text-align:center;padding:30px;">
+
+No Reviews Available
+
+</p>
+
+</div>
+
+</div>
+
 <!-- ================= LOGOUT MODAL ================= -->
 
 <div id="logoutModal" class="logout-modal">
@@ -324,8 +401,31 @@ DASHBOARD CHARTS
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-<script src="js/admin-dashboard.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script src="js/toast.js"></script>
+<script src="js/admin-dashboard.js"></script>
+<!-- ===========================
+LIVE NOTIFICATION
+=========================== -->
+
+<div id="notificationPopup" class="notification-popup">
+
+    <div class="notification-icon">
+        🔔
+    </div>
+
+    <div class="notification-text">
+
+        <h4>New Order Received</h4>
+
+        <p id="notificationMessage">
+            A customer has placed a new order.
+        </p>
+
+    </div>
+
+</div>
 </body>
 
 </html>

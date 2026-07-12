@@ -1,0 +1,651 @@
+/* ==========================================
+   SSV HOTEL ADMIN PROFILE
+========================================== */
+
+*{
+
+    margin:0;
+
+    padding:0;
+
+    box-sizing:border-box;
+
+    font-family:"Poppins",sans-serif;
+
+}
+
+body{
+
+    background:#f4f7fb;
+
+    min-height:100vh;
+
+}
+
+/* ==========================
+   NAVBAR
+========================== */
+
+.navbar{
+
+    width:100%;
+
+    height:75px;
+
+    background:#ffffff;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:0 60px;
+
+    box-shadow:0 5px 18px rgba(0,0,0,.08);
+
+    position:sticky;
+
+    top:0;
+
+    z-index:1000;
+
+}
+
+.logo{
+
+    font-size:24px;
+
+    font-weight:700;
+
+    color:#ff6b35;
+
+}
+
+.navbar ul{
+
+    display:flex;
+
+    gap:28px;
+
+    list-style:none;
+
+}
+
+.navbar ul li a{
+
+    text-decoration:none;
+
+    color:#444;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.navbar ul li a i{
+
+    margin-right:8px;
+
+}
+
+.navbar ul li a:hover,
+
+.navbar ul li a.active{
+
+    color:#ff6b35;
+
+}
+
+/* ==========================
+   PROFILE CONTAINER
+========================== */
+
+.profile-container{
+
+    display:flex;
+
+    justify-content:center;
+
+    padding:50px 20px;
+
+}
+
+.profile-card{
+
+    width:950px;
+
+    background:#ffffff;
+
+    border-radius:25px;
+
+    padding:40px;
+
+    box-shadow:0 20px 45px rgba(0,0,0,.12);
+
+    animation:fadeUp .6s ease;
+
+}
+
+.profile-card h1{
+
+    text-align:center;
+
+    color:#222;
+
+    margin-bottom:35px;
+
+    font-size:36px;
+
+}
+
+.profile-card h2{
+
+    color:#ff6b35;
+
+    margin-top:35px;
+
+    margin-bottom:20px;
+
+    font-size:22px;
+
+    border-left:5px solid #ff6b35;
+
+    padding-left:12px;
+
+}
+
+/* ==========================
+   PHOTO
+========================== */
+
+.photo-section{
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    margin-bottom:35px;
+
+}
+
+.photo-section img{
+
+    width:180px;
+
+    height:180px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:6px solid #ff6b35;
+
+    background:#fff;
+
+    box-shadow:0 15px 35px rgba(0,0,0,.15);
+
+    margin-bottom:20px;
+
+    transition:.3s;
+
+}
+
+.photo-section img:hover{
+
+    transform:scale(1.05);
+
+}
+
+.photo-section input{
+
+    width:260px;
+
+    padding:10px;
+
+    border:2px dashed #ff6b35;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    background:#fff8f3;
+
+}
+/* ==========================
+   FORM GRID
+========================== */
+
+.grid{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:25px;
+
+}
+
+.full-width{
+
+    grid-column:1 / span 2;
+
+}
+
+/* ==========================
+   FORM GROUP
+========================== */
+
+.form-group{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.form-group label{
+
+    font-size:15px;
+
+    font-weight:600;
+
+    color:#444;
+
+    margin-bottom:8px;
+
+}
+
+.form-group input{
+
+    width:100%;
+
+    padding:15px;
+
+    border:2px solid #e5e5e5;
+
+    border-radius:12px;
+
+    font-size:16px;
+
+    outline:none;
+
+    transition:.3s;
+
+    background:#fafafa;
+
+}
+
+.form-group input:focus{
+
+    border-color:#ff6b35;
+
+    background:#ffffff;
+
+    box-shadow:0 0 12px rgba(255,107,53,.20);
+
+}
+
+.form-group input[readonly]{
+
+    background:#f2f2f2;
+
+    color:#666;
+
+    cursor:not-allowed;
+
+}
+
+/* ==========================
+   SHOW PASSWORD
+========================== */
+
+.show-password{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    margin:25px 0;
+
+}
+
+.show-password input{
+
+    width:18px;
+
+    height:18px;
+
+    cursor:pointer;
+
+}
+
+.show-password label{
+
+    font-size:15px;
+
+    font-weight:500;
+
+    color:#444;
+
+    cursor:pointer;
+
+}
+
+/* ==========================
+   BUTTONS
+========================== */
+
+.button-group{
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:20px;
+
+    margin-top:30px;
+
+    flex-wrap:wrap;
+
+}
+
+.button-group button{
+
+    min-width:220px;
+
+    padding:16px;
+
+    border:none;
+
+    border-radius:12px;
+
+    font-size:17px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+#saveProfile{
+
+    background:linear-gradient(90deg,#ff6b35,#ff914d);
+
+    color:#ffffff;
+
+}
+
+#saveProfile:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 12px 25px rgba(255,107,53,.35);
+
+}
+
+#resetProfile{
+
+    background:#ececec;
+
+    color:#333;
+
+}
+
+#resetProfile:hover{
+
+    background:#dddddd;
+
+    transform:translateY(-3px);
+
+}
+
+.button-group button i{
+
+    margin-right:8px;
+
+}
+/* ==========================================
+   RESPONSIVE DESIGN
+========================================== */
+
+@media(max-width:992px){
+
+.profile-card{
+
+    width:100%;
+
+    padding:30px;
+
+}
+
+.grid{
+
+    grid-template-columns:1fr;
+
+}
+
+.full-width{
+
+    grid-column:auto;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.navbar{
+
+    flex-direction:column;
+
+    height:auto;
+
+    padding:20px;
+
+}
+
+.logo{
+
+    margin-bottom:15px;
+
+}
+
+.navbar ul{
+
+    flex-wrap:wrap;
+
+    justify-content:center;
+
+    gap:15px;
+
+}
+
+.profile-container{
+
+    padding:25px 12px;
+
+}
+
+.profile-card{
+
+    padding:25px;
+
+}
+
+.profile-card h1{
+
+    font-size:28px;
+
+}
+
+.profile-card h2{
+
+    font-size:20px;
+
+}
+
+.photo-section img{
+
+    width:150px;
+
+    height:150px;
+
+}
+
+.photo-section input{
+
+    width:100%;
+
+}
+
+.button-group{
+
+    flex-direction:column;
+
+}
+
+.button-group button{
+
+    width:100%;
+
+}
+
+}
+
+@media(max-width:480px){
+
+.logo{
+
+    font-size:20px;
+
+}
+
+.navbar ul li a{
+
+    font-size:14px;
+
+}
+
+.profile-card{
+
+    border-radius:18px;
+
+    padding:18px;
+
+}
+
+.profile-card h1{
+
+    font-size:24px;
+
+}
+
+.profile-card h2{
+
+    font-size:18px;
+
+}
+
+.form-group label{
+
+    font-size:14px;
+
+}
+
+.form-group input{
+
+    padding:13px;
+
+    font-size:15px;
+
+}
+
+.photo-section img{
+
+    width:130px;
+
+    height:130px;
+
+}
+
+}
+
+/* ==========================================
+   ANIMATIONS
+========================================== */
+
+@keyframes fadeUp{
+
+from{
+
+    opacity:0;
+
+    transform:translateY(40px);
+
+}
+
+to{
+
+    opacity:1;
+
+    transform:translateY(0);
+
+}
+
+}
+
+/* ==========================================
+   SCROLLBAR
+========================================== */
+
+::-webkit-scrollbar{
+
+    width:10px;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#ff6b35;
+
+    border-radius:20px;
+
+}
+
+::-webkit-scrollbar-track{
+
+    background:#ececec;
+
+}
+
+/* ==========================================
+   HOVER EFFECTS
+========================================== */
+
+.form-group input:hover{
+
+    border-color:#ff914d;
+
+}
+
+.photo-section img{
+
+    transition:.35s;
+
+}
+
+.photo-section img:hover{
+
+    transform:scale(1.05) rotate(2deg);
+
+}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Sales Report</title>
+
+    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="stylesheet" href="CSS/daily-report.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>📊 SSV HOTEL - Daily Sales Report</h1>
+
+    <div class="report-card">
+
+        <h2 id="reportDate"></h2>
+
+        <p><strong>Total Orders:</strong> <span id="totalOrders">0</span></p>
+
+        <p><strong>Total Rotis:</strong> <span id="totalRotis">0</span></p>
+
+        <p><strong>Total Revenue:</strong> ₹<span id="totalRevenue">0</span></p>
+
+        <button onclick="window.print()">🖨 Print Report</button>
+
+    </div>
+
+</div>
+
+<script src="js/daily-report.js"></script>
+
+</body>
+</html>

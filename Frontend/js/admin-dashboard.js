@@ -1,6 +1,7 @@
 // ==========================================
 // SSV HOTEL ADMIN DASHBOARD
 // ==========================================
+
 const statusFilter =
     document.getElementById("statusFilter");
     const dateFilter =
@@ -33,12 +34,40 @@ const totalRevenue = document.getElementById("totalRevenue");
 
 const pendingOrders = document.getElementById("pendingOrders");
 
+const totalRotis = document.getElementById("totalRotis");
+
 // Store Orders
 
 let orders = [];
+let lastOrderCount = 0;
+const badge = document.getElementById("liveOrdersBadge");
+
+// ===========================
+// HOTEL STATUS
+// ===========================
+
+const hotelStatusText =
+document.getElementById("hotelStatusText");
+
+const toggleHotelBtn =
+document.getElementById("toggleHotelBtn");
+
+// Default = Open
+
+if(localStorage.getItem("hotelStatus") === null){
+
+    localStorage.setItem(
+        "hotelStatus",
+        "OPEN"
+    );
+
+}
 let ordersChart;
 let revenueChart;
+let feedbacks = [];
 
+// Notification Sound
+const notificationSound = new Audio("sound/notification.mp3.wav");
 // ==========================================
 // CHECK ADMIN LOGIN
 // ==========================================
@@ -48,6 +77,7 @@ if(localStorage.getItem("adminLoggedIn") !== "true"){
     window.location.href = "admin-login.html";
 
 }
+
 // ==========================================
 // LOAD ALL ORDERS
 // ==========================================
@@ -64,12 +94,56 @@ async function loadOrders(){
 
         if(result.success){
 
+            const previousCount = orders.length;
+
             orders = result.orders;
+
+// New order detected
+if(lastOrderCount > 0 &&
+   orders.length > lastOrderCount){
+
+    const latest =
+        orders[0];
+
+    showNotification(
+
+        latest.full_name +
+
+        " placed " +
+
+        latest.quantity +
+
+        " Rotis"
+
+    );
+
+}
+
+lastOrderCount = orders.length;
+
+            // Update badge
+            const badge = document.getElementById("liveOrdersBadge");
+
+if (badge) {
+    badge.textContent = orders.length;
+}
+
+            // New order notification
+            if(orders.length > previousCount && previousCount !== 0){
+
+                showToast("🔔 New Order Received!");
+
+                notificationSound.currentTime = 0;
+notificationSound.play();
+
+            }
 
             renderOrders();
 
             updateDashboardCards();
+
             loadChart();
+
             loadRevenueChart();
 
         }else{
@@ -87,6 +161,29 @@ async function loadOrders(){
         alert("Unable to connect to server.");
 
     }
+
+}
+
+// ==========================================
+// SHOW POPUP
+// ==========================================
+
+function showNotification(message){
+
+    const popup =
+        document.getElementById("notificationPopup");
+
+    document.getElementById(
+        "notificationMessage"
+    ).textContent = message;
+
+    popup.classList.add("show");
+
+    setTimeout(function(){
+
+        popup.classList.remove("show");
+
+    },5000);
 
 }
 
@@ -151,18 +248,28 @@ function renderOrders(){
                 </span>
 
             </td>
+<td>
 
-            <td>
+<button
+class="action-btn"
+onclick="printKitchenReceipt('${order.order_id}')">
 
-          <button
-    class="action-btn"
-    onclick="updateOrderStatus('${order.order_id}')">
-
-    Update
+🖨 Print
 
 </button>
-            </td>
 
+<br><br>
+
+<button
+class="action-btn"
+onclick="updateOrderStatus('${order.order_id}')">
+
+Update
+
+</button>
+
+</td>
+            
         </tr>
 
         `;
@@ -224,10 +331,16 @@ async function updateOrderStatus(orderID){
     }
 
 }
+let rotis = 0;
+
+orders.forEach(order => {
+    rotis += Number(order.quantity);
+});
+
+totalRotis.textContent = rotis;
 // ==========================================
 // DASHBOARD CARDS
 // ==========================================
-
 function updateDashboardCards(){
 
     totalOrders.textContent = orders.length;
@@ -251,14 +364,22 @@ function updateDashboardCards(){
     let revenue = 0;
 
     orders.forEach(order => {
-
         revenue += Number(order.total_amount);
-
     });
 
     totalRevenue.textContent = "₹" + revenue;
 
+    // Total Rotis Sold
+    let rotis = 0;
+
+    orders.forEach(order => {
+        rotis += Number(order.quantity);
+    });
+
+    totalRotis.textContent = rotis;
+
 }
+
 // ==========================================
 // ORDER ANALYTICS CHART
 // ==========================================
@@ -818,15 +939,508 @@ window.addEventListener("click", function(e){
 window.addEventListener("load", function(){
 
     loadOrders();
-
+loadFeedback();
 });
 
 // ==========================================
-// AUTO REFRESH EVERY 30 SECONDS
+// AUTO REFRESH EVERY 10 SECONDS
 // ==========================================
 
 setInterval(function(){
 
     loadOrders();
 
-}, 30000);
+}, 10000);
+// ===========================
+// HOTEL OPEN / CLOSE
+// ===========================
+
+function loadHotelStatus(){
+
+    const status =
+    localStorage.getItem("hotelStatus");
+
+    if(status === "OPEN"){
+
+        hotelStatusText.innerHTML =
+        "🟢 OPEN";
+
+        hotelStatusText.style.color =
+        "green";
+
+        toggleHotelBtn.innerHTML =
+        "Close Hotel";
+
+    }
+
+    else{
+
+        hotelStatusText.innerHTML =
+        "🔴 CLOSED";
+
+        hotelStatusText.style.color =
+        "red";
+
+        toggleHotelBtn.innerHTML =
+        "Open Hotel";
+
+    }
+
+}
+
+toggleHotelBtn.addEventListener(
+"click",
+function(){
+
+    const status =
+    localStorage.getItem("hotelStatus");
+
+    if(status === "OPEN"){
+
+        localStorage.setItem(
+            "hotelStatus",
+            "CLOSED"
+        );
+
+    }
+
+    else{
+
+        localStorage.setItem(
+            "hotelStatus",
+            "OPEN"
+        );
+
+    }
+
+    loadHotelStatus();
+
+});
+
+loadHotelStatus();
+// ===========================
+// AUTO HOTEL TIMING
+// ===========================
+
+function autoHotelTiming(){
+
+    const now = new Date();
+
+    const hour = now.getHours();
+
+    // Hotel Open: 3 PM (15:00)
+    // Hotel Close: 10 PM (22:00)
+
+    if(hour >= 15 && hour < 22){
+
+        localStorage.setItem(
+            "hotelStatus",
+            "OPEN"
+        );
+
+    }
+
+    else{
+
+        localStorage.setItem(
+            "hotelStatus",
+            "CLOSED"
+        );
+
+    }
+
+    loadHotelStatus();
+
+}
+
+// Check immediately
+autoHotelTiming();
+
+// Check every minute
+setInterval(autoHotelTiming, 60000);
+
+
+// ==========================================
+// LOAD CUSTOMER FEEDBACK
+// ==========================================
+
+async function loadFeedback(){
+
+    try{
+
+        const response = await fetch(
+            "http://127.0.0.1:5000/api/admin/feedback"
+        );
+
+        const result = await response.json();
+
+        if(result.success){
+
+            feedbacks = result.feedback;
+
+            renderFeedback();
+
+        }
+
+    }
+
+    catch(error){
+
+        console.log(error);
+
+    }
+
+}
+// ==========================================
+// SHOW FEEDBACK
+// ==========================================
+
+function renderFeedback(){
+
+    const container =
+        document.getElementById("feedbackContainer");
+
+    if(!container){
+        return;
+    }
+
+    container.innerHTML = "";
+
+    feedbacks.forEach(function(item){
+
+        container.innerHTML += `
+
+        <div class="review-card">
+
+            <h3>${item.customer_name}</h3>
+
+            <p><strong>Order:</strong> ${item.order_id}</p>
+
+            <p>⭐ ${item.rating}/5</p>
+
+            <p>${item.review}</p>
+
+            <small>${item.created_at}</small>
+
+            <br><br>
+
+            <button
+                class="action-btn delete-btn"
+                onclick="deleteFeedback(${item.id})">
+
+                Delete
+
+            </button>
+
+        </div>
+
+        `;
+
+    });
+
+}
+
+
+
+async function deleteFeedback(id){
+
+    if(!confirm("Delete this review?")){
+
+        return;
+
+    }
+
+    const response = await fetch(
+        "http://127.0.0.1:5000/api/admin/delete-feedback",
+        {
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+                id:id
+            })
+        }
+    );
+
+    const result = await response.json();
+
+    if(result.success){
+
+        alert("Review Deleted");
+
+        loadFeedback();
+
+    }
+
+}
+// ==========================================
+// KITCHEN RECEIPT PRINT
+// ==========================================
+
+function printKitchenReceipt(orderId){
+
+    // Find the selected order
+    const order = orders.find(function(item){
+
+        return item.order_id === orderId;
+
+    });
+
+    if(!order){
+
+        alert("Order not found.");
+
+        return;
+
+    }
+
+  const receipt = `
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Kitchen Receipt</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    width:300px;
+
+    margin:auto;
+
+    padding:15px;
+
+    font-family:Courier New, monospace;
+
+    color:#000;
+
+}
+
+.header{
+
+    text-align:center;
+
+}
+
+.header h2{
+
+    font-size:24px;
+
+}
+
+.header h3{
+
+    margin-top:5px;
+
+    font-size:18px;
+
+}
+
+.line{
+
+    border-top:2px dashed #000;
+
+    margin:12px 0;
+
+}
+
+.row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin:8px 0;
+
+    font-size:15px;
+
+}
+
+.title{
+
+    font-weight:bold;
+
+}
+
+.big{
+
+    text-align:center;
+
+    font-size:22px;
+
+    font-weight:bold;
+
+    margin:15px 0;
+
+}
+
+.footer{
+
+    text-align:center;
+
+    margin-top:20px;
+
+    font-size:14px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+<h2>🏨 SSV HOTEL</h2>
+
+<h3>KITCHEN ORDER TICKET</h3>
+
+<p>Shiva Nagar, Dharmavaram</p>
+
+<p>☎ 7075094490</p>
+
+</div>
+
+<div class="line"></div>
+
+<div class="row">
+
+<span class="title">Order ID</span>
+
+<span>${order.order_id}</span>
+
+</div>
+
+<div class="row">
+
+<span class="title">Customer</span>
+
+<span>${order.full_name}</span>
+
+</div>
+
+<div class="row">
+
+<span class="title">Mobile</span>
+
+<span>${order.mobile}</span>
+
+</div>
+
+<div class="row">
+
+<span class="title">Pickup Date</span>
+
+<span>${order.pickup_date}</span>
+
+</div>
+
+<div class="row">
+
+<span class="title">Pickup Time</span>
+
+<span>${order.pickup_time || "Not Available"}</span>
+
+</div>
+
+<div class="line"></div>
+
+<div class="big">
+
+🍽️ ${order.quantity} ROTIS
+
+</div>
+
+<div class="line"></div>
+
+<div class="row">
+
+<span class="title">Status</span>
+
+<span>${order.order_status}</span>
+
+</div>
+
+<div class="row">
+
+<span class="title">Advance</span>
+
+<span>₹${order.advance_amount}</span>
+
+</div>
+
+<div class="row">
+
+<span class="title">Balance</span>
+
+<span>₹${order.remaining_amount}</span>
+
+</div>
+
+<div class="line"></div>
+
+<p><b>Instructions</b></p>
+
+<p>
+
+${order.instructions || "No Special Instructions"}
+
+</p>
+
+<div class="line"></div>
+
+<div class="footer">
+
+Printed :
+${new Date().toLocaleString()}
+
+<br><br>
+
+★★★★★
+
+<br>
+
+THANK YOU
+
+</div>
+
+</body>
+
+</html>
+`;
+
+   const printWindow = window.open("", "_blank");
+
+printWindow.document.write(receipt);
+
+printWindow.document.close();
+
+printWindow.focus();
+
+// Wait for the page to load
+printWindow.onload = function(){
+
+    // Open print dialog
+    printWindow.print();
+
+    // Automatically close after printing
+    printWindow.onafterprint = function(){
+
+        printWindow.close();
+
+    };
+
+}
+}

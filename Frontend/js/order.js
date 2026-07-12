@@ -13,9 +13,8 @@ const summaryQuantity = document.getElementById("summaryQuantity");
 const totalAmount = document.getElementById("totalAmount");
 const advanceAmount = document.getElementById("advanceAmount");
 const remainingAmount = document.getElementById("remainingAmount");
-
 const orderForm = document.getElementById("orderForm");
-
+const loadingSpinner = document.getElementById("loadingSpinner");
 // ===============================
 // Update Price
 // ===============================
@@ -78,52 +77,6 @@ const today = new Date().toISOString().split("T")[0];
 
 pickupDate.min = today;
 
-async function placeOrder(orderData) {
-
-    try {
-
-        const response = await fetch("http://127.0.0.1:5000/api/order", {
-
-            method: "POST",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify(orderData)
-
-        });
-
-        const result = await response.json();
-
-        if(result.success){
-
-            alert("Order Placed Successfully!");
-
-            localStorage.setItem("orderID", result.order_id);
-
-localStorage.setItem(
-    "qrCode",
-    "http://127.0.0.1:5000/static/qr/" + result.order_id + ".png"
-);
-
-window.location.href = "receipt.html";
-
-        }else{
-
-            alert(result.error);
-
-        }
-
-    } catch(err){
-
-        alert("Server Connection Failed!");
-
-        console.log(err);
-
-    }
-
-}
 
 // ===============================
 // Form Submit
@@ -149,15 +102,14 @@ orderForm.addEventListener("submit", function (e) {
 
     if (name === "") {
 
-        alert("Please enter your name.");
+        showToast("Please enter your name.", "warning");
 
         return;
 
     }
 
     if (!/^[0-9]{10}$/.test(mobile)) {
-
-        alert("Enter a valid 10-digit mobile number.");
+showToast("Enter a valid 10-digit mobile number.", "warning");
 
         return;
 
@@ -165,7 +117,7 @@ orderForm.addEventListener("submit", function (e) {
 
     if (date === "") {
 
-        alert("Select pickup date.");
+        showToast("Select pickup date.", "warning");
 
         return;
 
@@ -173,7 +125,7 @@ orderForm.addEventListener("submit", function (e) {
 
     if (time === "") {
 
-        alert("Select pickup time.");
+        showToast("Select pickup time.", "warning");
 
         return;
 
@@ -207,16 +159,60 @@ orderForm.addEventListener("submit", function (e) {
 
     };
 
-    
+  // Show Loading Spinner
+if (loadingSpinner) {
+    loadingSpinner.style.display = "flex";
+}
 
-   placeOrder({
+fetch("http://127.0.0.1:5000/api/order", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        full_name: name,
+        mobile: mobile,
+        quantity: quantity,
+        pickup_date: date,
+        pickup_time: time,
+        instructions: instructions
+    })
+})
+.then(response => response.json())
+.then(result => {
 
-    full_name: name,
-    mobile: mobile,
-    quantity: quantity,
-    pickup_date: date,
-    pickup_time: time,
-    instructions: instructions
+    if (loadingSpinner) {
+        loadingSpinner.style.display = "none";
+    }
+
+    if (result.success) {
+
+        order.orderID = result.order_id;
+
+        localStorage.setItem("orderID", result.order_id);
+        localStorage.setItem("currentOrder", JSON.stringify(order));
+
+        showToast("✅ Order Created Successfully");
+
+        setTimeout(() => {
+            window.location.href = "payment.html";
+        }, 1000);
+
+    } else {
+
+        alert(result.error);
+
+    }
+
+})
+.catch(error => {
+
+    if (loadingSpinner) {
+        loadingSpinner.style.display = "none";
+    }
+
+    console.log(error);
+    alert("Unable to connect to server.");
 
 });
 
@@ -227,3 +223,44 @@ orderForm.addEventListener("submit", function (e) {
 // ===============================
 
 updateSummary();
+// ===========================
+// AUTO HOTEL STATUS CHECK
+// ===========================
+
+function checkHotelStatus(){
+
+    const now = new Date();
+
+    const hour = now.getHours();
+
+    if(hour >= 15 && hour < 22){
+
+        document.getElementById(
+            "hotelClosedBox"
+        ).style.display = "none";
+
+        document.querySelector(
+            ".order-container"
+        ).style.display = "flex";
+
+    }
+
+    else{
+
+        document.getElementById(
+            "hotelClosedBox"
+        ).style.display = "block";
+
+        document.querySelector(
+            ".order-container"
+        ).style.display = "none";
+
+    }
+
+}
+
+checkHotelStatus();
+
+// Update every minute
+setInterval(checkHotelStatus, 60000);
+

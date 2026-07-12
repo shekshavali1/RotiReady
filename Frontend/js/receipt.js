@@ -16,10 +16,8 @@ if (!order) {
 // ==============================
 // Display Receipt Details
 // ==============================
-
 document.getElementById("receiptOrderID").textContent =
-order.orderID;
-
+localStorage.getItem("orderID");
 document.getElementById("receiptName").textContent =
 order.customerName;
 
@@ -52,7 +50,7 @@ order.paymentStatus;
 // SHOW QR CODE
 // ==========================================
 
-const qrImage = document.getElementById("qrImage");
+const qrImage = document.getElementById("receiptQR");
 
 const qrCode = localStorage.getItem("qrCode");
 

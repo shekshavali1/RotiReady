@@ -3,12 +3,15 @@ from flask_cors import CORS
 from config import get_connection
 from routes.order import order_bp
 from routes.admin import admin_bp
+from routes.feedback import feedback_bp
+from routes.admin_feedback import admin_feedback_bp
 
 app = Flask(__name__)
 CORS(app)
 app.register_blueprint(order_bp)
 app.register_blueprint(admin_bp)
-
+app.register_blueprint(feedback_bp)
+app.register_blueprint(admin_feedback_bp)
 @app.route("/")
 def home():
     return {

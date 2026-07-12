@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from config import get_connection
-
+from services.whatsapp import send_whatsapp
+from datetime import date
 admin_bp = Blueprint("admin", __name__)
 
 @admin_bp.route("/api/admin/login", methods=["POST"])
@@ -124,3 +125,45 @@ def update_order_status(order_id):
 
         })
     
+
+# ==========================================
+# DAILY SALES REPORT
+# ==========================================
+
+@admin_bp.route("/api/admin/daily-report", methods=["GET"])
+def daily_report():
+
+    try:
+
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        today = date.today()
+
+        cursor.execute("""
+            SELECT
+                COUNT(*) AS total_orders,
+                IFNULL(SUM(quantity),0) AS total_rotis,
+                IFNULL(SUM(total_amount),0) AS total_revenue
+            FROM orders
+            WHERE pickup_date = %s
+        """, (today,))
+
+        report = cursor.fetchone()
+
+        cursor.close()
+        connection.close()
+
+        report["total_revenue"] = float(report["total_revenue"])
+
+        return jsonify({
+            "success": True,
+            "report": report
+        })
+
+    except Exception as e:
+
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 500

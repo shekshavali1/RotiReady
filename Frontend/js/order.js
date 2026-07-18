@@ -4,7 +4,10 @@
 
 const PRICE_PER_ROTI = 10;
 
+// ===============================
 // Elements
+// ===============================
+
 const minusBtn = document.getElementById("minusBtn");
 const plusBtn = document.getElementById("plusBtn");
 const quantityInput = document.getElementById("quantity");
@@ -13,21 +16,30 @@ const summaryQuantity = document.getElementById("summaryQuantity");
 const totalAmount = document.getElementById("totalAmount");
 const advanceAmount = document.getElementById("advanceAmount");
 const remainingAmount = document.getElementById("remainingAmount");
-const orderForm = document.getElementById("orderForm");
+
+const pickupDate = document.getElementById("pickupDate");
+const continueBtn = document.getElementById("continueBtn");
 const loadingSpinner = document.getElementById("loadingSpinner");
+
 // ===============================
-// Update Price
+// Minimum Date
+// ===============================
+
+pickupDate.min = new Date().toISOString().split("T")[0];
+
+// ===============================
+// Update Summary
 // ===============================
 
 function updateSummary() {
 
-    let qty = parseInt(quantityInput.value);
+    const qty = parseInt(quantityInput.value);
 
-    let total = qty * PRICE_PER_ROTI;
+    const total = qty * PRICE_PER_ROTI;
 
-    let advance = total / 2;
+    const advance = total / 2;
 
-    let remaining = total - advance;
+    const remaining = total - advance;
 
     summaryQuantity.textContent = qty;
 
@@ -40,10 +52,10 @@ function updateSummary() {
 }
 
 // ===============================
-// Increase Quantity
+// Quantity Buttons
 // ===============================
 
-plusBtn.addEventListener("click", function () {
+plusBtn.addEventListener("click", () => {
 
     quantityInput.value++;
 
@@ -51,11 +63,7 @@ plusBtn.addEventListener("click", function () {
 
 });
 
-// ===============================
-// Decrease Quantity
-// ===============================
-
-minusBtn.addEventListener("click", function () {
+minusBtn.addEventListener("click", () => {
 
     if (quantityInput.value > 1) {
 
@@ -68,48 +76,34 @@ minusBtn.addEventListener("click", function () {
 });
 
 // ===============================
-// Set Minimum Date
+// Continue Button
 // ===============================
 
-const pickupDate = document.getElementById("pickupDate");
-
-const today = new Date().toISOString().split("T")[0];
-
-pickupDate.min = today;
-
-
-// ===============================
-// Form Submit
-// ===============================
-
-orderForm.addEventListener("submit", function (e) {
-
-    e.preventDefault();
+continueBtn.addEventListener("click", function () {
 
     const name = document.getElementById("customerName").value.trim();
 
     const mobile = document.getElementById("mobileNumber").value.trim();
 
-    const date = pickupDate.value;
+    const date = document.getElementById("pickupDate").value;
 
     const time = document.getElementById("pickupTime").value;
 
-    const instructions =
-        document.getElementById("instructions").value;
+    const instructions = document.getElementById("instructions").value;
 
-    const quantity =
-        parseInt(quantityInput.value);
+    const quantity = parseInt(quantityInput.value);
 
     if (name === "") {
 
-        showToast("Please enter your name.", "warning");
+        showToast("Please enter your name", "warning");
 
         return;
 
     }
 
     if (!/^[0-9]{10}$/.test(mobile)) {
-showToast("Enter a valid 10-digit mobile number.", "warning");
+
+        showToast("Enter valid mobile number", "warning");
 
         return;
 
@@ -117,7 +111,7 @@ showToast("Enter a valid 10-digit mobile number.", "warning");
 
     if (date === "") {
 
-        showToast("Select pickup date.", "warning");
+        showToast("Select pickup date", "warning");
 
         return;
 
@@ -125,7 +119,7 @@ showToast("Enter a valid 10-digit mobile number.", "warning");
 
     if (time === "") {
 
-        showToast("Select pickup time.", "warning");
+        showToast("Select pickup time", "warning");
 
         return;
 
@@ -159,62 +153,91 @@ showToast("Enter a valid 10-digit mobile number.", "warning");
 
     };
 
-  // Show Loading Spinner
-if (loadingSpinner) {
-    loadingSpinner.style.display = "flex";
-}
+    if (loadingSpinner) {
 
-fetch("http://127.0.0.1:5000/api/order", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-        full_name: name,
-        mobile: mobile,
-        quantity: quantity,
-        pickup_date: date,
-        pickup_time: time,
-        instructions: instructions
+        loadingSpinner.style.display = "flex";
+
+    }
+
+    fetch("http://127.0.0.1:5000/api/order", {
+
+        method: "POST",
+
+        headers: {
+
+            "Content-Type": "application/json"
+
+        },
+
+        body: JSON.stringify({
+
+            full_name: name,
+
+            mobile: mobile,
+
+            quantity: quantity,
+
+            pickup_date: date,
+
+            pickup_time: time,
+
+            instructions: instructions
+
+        })
+
     })
-})
-.then(response => response.json())
-.then(result => {
 
-    if (loadingSpinner) {
-        loadingSpinner.style.display = "none";
-    }
+    .then(res => res.json())
 
-    if (result.success) {
+    .then(result => {
 
-        order.orderID = result.order_id;
+        if (loadingSpinner) {
 
-        localStorage.setItem("orderID", result.order_id);
-        localStorage.setItem("currentOrder", JSON.stringify(order));
+            loadingSpinner.style.display = "none";
 
-        showToast("✅ Order Created Successfully");
+        }
 
-        setTimeout(() => {
-            window.location.href = "payment.html";
-        }, 1000);
+        console.log(result);
 
-    } else {
+        if (result.success) {
 
-        alert(result.error);
+            order.orderID = result.order_id;
 
-    }
+            localStorage.setItem("orderID", result.order_id);
 
-})
-.catch(error => {
+            localStorage.setItem("currentOrder", JSON.stringify(order));
 
-    if (loadingSpinner) {
-        loadingSpinner.style.display = "none";
-    }
+            showToast("Order Created Successfully");
 
-    console.log(error);
-    alert("Unable to connect to server.");
+            setTimeout(function(){
 
-});
+                window.location.href = "payment.html";
+
+            },800);
+
+        }
+
+        else{
+
+            alert(result.error || result.message);
+
+        }
+
+    })
+
+    .catch(err=>{
+
+        if (loadingSpinner) {
+
+            loadingSpinner.style.display = "none";
+
+        }
+
+        console.error(err);
+
+        alert("Server Connection Failed");
+
+    });
 
 });
 
@@ -223,37 +246,32 @@ fetch("http://127.0.0.1:5000/api/order", {
 // ===============================
 
 updateSummary();
-// ===========================
-// AUTO HOTEL STATUS CHECK
-// ===========================
+
+// ===============================
+// Hotel Opening Time
+// ===============================
 
 function checkHotelStatus(){
 
-    const now = new Date();
+    const hour = new Date().getHours();
 
-    const hour = now.getHours();
+    const closedBox = document.getElementById("hotelClosedBox");
 
-    if(hour >= 15 && hour < 22){
+    const orderContainer = document.querySelector(".order-container");
 
-        document.getElementById(
-            "hotelClosedBox"
-        ).style.display = "none";
+    if(hour>=15 && hour<22){
 
-        document.querySelector(
-            ".order-container"
-        ).style.display = "flex";
+        closedBox.style.display="none";
+
+        orderContainer.style.display="flex";
 
     }
 
     else{
 
-        document.getElementById(
-            "hotelClosedBox"
-        ).style.display = "block";
+        closedBox.style.display="block";
 
-        document.querySelector(
-            ".order-container"
-        ).style.display = "none";
+        orderContainer.style.display="none";
 
     }
 
@@ -261,6 +279,4 @@ function checkHotelStatus(){
 
 checkHotelStatus();
 
-// Update every minute
-setInterval(checkHotelStatus, 60000);
-
+setInterval(checkHotelStatus,60000);

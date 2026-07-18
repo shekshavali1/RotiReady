@@ -49,7 +49,9 @@ trackForm.addEventListener("submit", async function(e){
 
     showOrder(result.order);
 
-//updateTimeline(result.order.order_status);
+updateTimeline(result.order.order_status);
+
+updateStatusMessage(result.order.order_status);
 }
 
         else{
@@ -71,114 +73,45 @@ trackForm.addEventListener("submit", async function(e){
 // ==========================================
 // SHOW ORDER DETAILS
 // ==========================================
-
 function showOrder(order){
 
     resultCard.style.display = "block";
 
-    resultCard.innerHTML = `
+    document.getElementById("showOrderID").textContent =
+        order.order_id;
 
-    <div class="track-result">
+    document.getElementById("showCustomer").textContent =
+        order.full_name;
 
-        <h2>📦 Order Details</h2>
+    document.getElementById("showStatus").textContent =
+        order.order_status;
 
-        <div class="track-row">
+    document.getElementById("showDate").textContent =
+        order.pickup_date;
 
-            <span>Order ID</span>
+    document.getElementById("showTime").textContent =
+        order.pickup_time;
+        startCountdown(
+    order.pickup_date,
+    order.pickup_time
+);
+document.getElementById("showMobile").textContent =
+    order.mobile;
 
-            <strong>${order.order_id}</strong>
+document.getElementById("showQuantity").textContent =
+    order.quantity + " Rotis";
 
-        </div>
+document.getElementById("showTotal").textContent =
+    "₹" + order.total_amount;
 
-        <div class="track-row">
+document.getElementById("showAdvance").textContent =
+    "₹" + order.advance_amount;
 
-            <span>Customer</span>
+document.getElementById("showRemaining").textContent =
+    "₹" + order.remaining_amount;
 
-            <strong>${order.full_name}</strong>
-
-        </div>
-
-        <div class="track-row">
-
-            <span>Mobile</span>
-
-            <strong>${order.mobile}</strong>
-
-        </div>
-
-        <div class="track-row">
-
-            <span>Quantity</span>
-
-            <strong>${order.quantity} Rotis</strong>
-
-        </div>
-
-        <div class="track-row">
-
-            <span>Total Amount</span>
-
-            <strong>₹${order.total_amount}</strong>
-
-        </div>
-
-        <div class="track-row">
-
-            <span>Advance Paid</span>
-
-            <strong>₹${order.advance_amount}</strong>
-
-        </div>
-
-        <div class="track-row">
-
-            <span>Remaining Amount</span>
-
-            <strong>₹${order.remaining_amount}</strong>
-
-        </div>
-
-        <div class="track-row">
-
-            <span>Pickup Date</span>
-
-            <strong>${order.pickup_date}</strong>
-
-        </div>
-
-        <div class="track-row">
-
-            <span>Pickup Time</span>
-
-            <strong>${order.pickup_time}</strong>
-
-        </div>
-
-        <div class="track-row">
-
-            <span>Payment Status</span>
-
-            <strong>${order.payment_status}</strong>
-
-        </div>
-
-        <div class="track-row">
-
-            <span>Order Status</span>
-
-          <strong
-    id="liveStatus"
-    class="${order.order_status.toLowerCase()}">
-
-    ${order.order_status}
-
-</strong>
-        </div>
-
-    </div>
-
-    `;
-
+document.getElementById("showPayment").textContent =
+    order.payment_status;
 }
 // ==========================================
 // UPDATE TIMELINE
@@ -228,6 +161,55 @@ function updateTimeline(status){
             .classList.add("active");
 
     }
+}
+
+// ==========================================
+// PICKUP COUNTDOWN
+// ==========================================
+
+let countdownTimer;
+
+function startCountdown(date, time){
+
+    clearInterval(countdownTimer);
+
+    const pickup = new Date(date + " " + time);
+
+    countdownTimer = setInterval(function(){
+
+        const now = new Date();
+
+        const diff = pickup - now;
+
+        if(diff <= 0){
+
+            document.getElementById("countdown").innerHTML =
+            "🎉 Ready for Pickup";
+
+            clearInterval(countdownTimer);
+
+            return;
+
+        }
+
+        const hours =
+        Math.floor(diff / (1000 * 60 * 60));
+
+        const minutes =
+        Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+        const seconds =
+        Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById("countdown").innerHTML =
+
+            hours + "h " +
+
+            minutes + "m " +
+
+            seconds + "s";
+
+    },1000);
 
 }
 // ==========================================
@@ -266,7 +248,12 @@ setInterval(async function(){
 
         if(result.success){
 
+          
             showOrder(result.order);
+
+updateTimeline(result.order.order_status);
+
+updateStatusMessage(result.order.order_status);
 
         }
 
@@ -279,3 +266,43 @@ setInterval(async function(){
     }
 
 }, 5000);
+// ==========================================
+// LIVE STATUS MESSAGE
+// ==========================================
+
+function updateStatusMessage(status){
+
+    const box = document.getElementById("statusMessage");
+
+    box.style.display = "block";
+
+    box.className = "status-message";
+
+    if(status === "Preparing"){
+
+        box.classList.add("preparing");
+
+        box.innerHTML =
+        "👨‍🍳 Your delicious rotis are being prepared.";
+
+    }
+
+    else if(status === "Ready"){
+
+        box.classList.add("ready");
+
+        box.innerHTML =
+        "🎉 Your order is ready! Please collect it from SSV HOTEL.";
+
+    }
+
+    else if(status === "Completed"){
+
+        box.classList.add("completed");
+
+        box.innerHTML =
+        "✅ Thank you! Your order has been completed.";
+
+    }
+
+}

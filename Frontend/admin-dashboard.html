@@ -136,7 +136,29 @@ Manage customer orders, payments and order status.
     </button>
 
 </div>
+<div class="dashboard-card">
 
+    <h3>💰 Average Order</h3>
+
+    <h2 id="averageOrder">₹0</h2>
+
+</div>
+
+<div class="dashboard-card">
+
+    <h3>⭐ Completed %</h3>
+
+    <h2 id="completedPercent">0%</h2>
+
+</div>
+
+<div class="dashboard-card">
+
+    <h3>🏆 Best Sales Day</h3>
+
+    <h2 id="bestSalesDay">--</h2>
+
+</div>
 <!-- ==========================================
 DASHBOARD CHARTS
 ========================================== -->
@@ -158,6 +180,14 @@ DASHBOARD CHARTS
         <canvas id="revenueChart"></canvas>
 
     </div>
+
+</div>
+
+<div class="chart-card">
+
+    <h3>📈 Revenue Trend (Last 7 Days)</h3>
+
+    <canvas id="revenueTrendChart"></canvas>
 
 </div>
 
@@ -257,6 +287,21 @@ DASHBOARD CHARTS
         </tbody>
 
     </table>
+    <div class="pagination">
+
+    <button id="prevPageBtn">
+        ⬅ Previous
+    </button>
+
+    <span id="pageNumber">
+        Page 1
+    </span>
+
+    <button id="nextPageBtn">
+        Next ➡
+    </button>
+
+</div>
 
 </div>
 

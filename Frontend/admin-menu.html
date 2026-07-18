@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Menu Management</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+
+body{
+    font-family:Poppins,sans-serif;
+    background:#f5f5f5;
+}
+
+.container{
+    width:90%;
+    margin:auto;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    margin-top:30px;
+}
+
+input,select{
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+}
+
+button{
+    padding:10px 20px;
+    background:#28a745;
+    color:white;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+table{
+    width:100%;
+    margin-top:20px;
+    border-collapse:collapse;
+}
+
+table th,
+table td{
+    border:1px solid #ddd;
+    padding:10px;
+    text-align:center;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<h2>🍽 Menu Management</h2>
+
+<input id="itemName" placeholder="Food Name">
+
+<input id="price" type="number" placeholder="Price">
+
+<select id="category">
+
+<option value="">Select Category</option>
+
+<option value="Morning">Morning</option>
+
+<option value="Evening">Evening</option>
+
+</select>
+
+<label>Food Image</label>
+
+<input
+    type="file"
+    id="image"
+    accept="image/*">
+    <img
+    id="previewImage"
+    src=""
+    style="
+        width:120px;
+        display:none;
+        margin-top:10px;
+        border-radius:10px;
+        border:1px solid #ddd;
+    ">
+
+<select id="status">
+
+<option value="Available">Available</option>
+
+<option value="Unavailable">Unavailable</option>
+
+</select>
+
+<button onclick="addMenu()">
+
+Add Menu Item
+
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>Menu Items</h2>
+<table>
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+<th>Image</th>
+<th>Name</th>
+<th>Price</th>
+<th>Category</th>
+<th>Status</th>
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="menuTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<script src="js/admin-menu.js"></script>
+<script>
+
+const imageInput = document.getElementById("image");
+
+const preview = document.getElementById("previewImage");
+
+imageInput.addEventListener("change", function(){
+
+    const file = this.files[0];
+
+    if(file){
+
+        preview.src = URL.createObjectURL(file);
+
+        preview.style.display = "block";
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>

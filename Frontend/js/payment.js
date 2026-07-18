@@ -2,11 +2,9 @@
 // SSV HOTEL PAYMENT PAGE
 // ==========================================
 
-// Load Order
-const order = JSON.parse(localStorage.getItem("currentOrder"));
+const orderData = localStorage.getItem("currentOrder");
 
-// If no order exists, go back to Order page
-if (!order) {
+if (!orderData) {
 
     alert("No order found.");
 
@@ -14,6 +12,9 @@ if (!order) {
 
 }
 
+const order = JSON.parse(orderData);
+
+console.log(order);
 // ================================
 // Show Order Details
 // ================================

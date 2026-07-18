@@ -51,6 +51,8 @@
        <li><a href="index.html" id="navHome">Home</a></li>
 
 <li><a href="order.html" id="navOrder">Order</a></li>
+<li><a href="payment.html" id="navPayment">Payment</a></li>
+
 
 <li><a href="track.html" id="navTrack">Track</a></li>
 
@@ -139,79 +141,55 @@ Order online and skip the waiting time.
 
 </section>
 
-<!-- ================= menu section ================= -->
+<!-- ================= MENU SECTION ================= -->
 
 <section class="menu-section">
 
     <div class="container">
 
-        <h2 class="section-title" id="menuTitle">
-            Today's Menu
+        <h2 class="section-title">
+            🍽 Today's Menu
         </h2>
 
-        <p class="section-subtitle" id="menuSubtitle">
+        <p class="section-subtitle">
             Fresh food served daily at SSV HOTEL
         </p>
 
-        <div class="menu-grid">
+        <!-- Category Buttons -->
 
-            <!-- Morning Menu -->
+        <div class="menu-tabs">
 
-            <div class="menu-card">
+            <button
+                class="menu-tab active"
+                onclick="filterMenu('Morning')">
 
-                <h3 id="morningMenu">
-                    🌅 Morning Menu
-                </h3>
+                🌅 Morning
 
-                <span class="time" id="morningTime">
-                    6:00 AM – 11:00 AM
-                </span>
+            </button>
 
-                <div class="menu-item">
+            <button
+                class="menu-tab"
+                onclick="filterMenu('Evening')">
 
-                    <span id="dosaText">
-                        🥞 Dosa
-                    </span>
+                🌇 Evening
 
-                    <strong>₹10</strong>
+            </button>
 
-                </div>
+            <button
+                class="menu-tab"
+                onclick="filterMenu('Special')">
 
-                <div class="menu-item">
+                ⭐ Today's Special
 
-                    <span id="puriText">
-                        🥘 Puri
-                    </span>
+            </button>
 
-                    <strong>₹10</strong>
+        </div>
 
-                </div>
+        <!-- Dynamic Menu -->
 
-            </div>
-
-            <!-- Evening Menu -->
-
-            <div class="menu-card">
-
-                <h3 id="eveningMenu">
-                    🌇 Evening Menu
-                </h3>
-
-                <span class="time" id="eveningTime">
-                    4:00 PM – 10:00 PM
-                </span>
-
-                <div class="menu-item">
-
-                    <span id="rotiText">
-                        🫓 Roti
-                    </span>
-
-                    <strong>₹10</strong>
-
-                </div>
-
-            </div>
+        <div
+            class="menu-grid"
+            id="menuList">
 
         </div>
 
@@ -585,7 +563,7 @@ Order fresh rotis online and collect them without waiting.
 </div>
 
 </footer>
-
+<script src="js/menu.js"></script>
 <script src="js/language.js"></script>
 
 

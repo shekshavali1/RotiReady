@@ -35,12 +35,37 @@ const totalRevenue = document.getElementById("totalRevenue");
 const pendingOrders = document.getElementById("pendingOrders");
 
 const totalRotis = document.getElementById("totalRotis");
+const prevPageBtn =
+document.getElementById("prevPageBtn");
+
+const nextPageBtn =
+document.getElementById("nextPageBtn");
+
+const pageNumber =
+document.getElementById("pageNumber");
+const averageOrder =
+    document.getElementById("averageOrder");
+
+const completedPercent =
+    document.getElementById("completedPercent");
+
+const bestSalesDay =
+    document.getElementById("bestSalesDay");
 
 // Store Orders
 
 let orders = [];
 let lastOrderCount = 0;
+
+// ===========================
+// PAGINATION
+// ===========================
+let currentPage = 1;
+const ordersPerPage = 10;
 const badge = document.getElementById("liveOrdersBadge");
+if (badge) {
+    badge.textContent = orders.length;
+}
 
 // ===========================
 // HOTEL STATUS
@@ -64,6 +89,7 @@ if(localStorage.getItem("hotelStatus") === null){
 }
 let ordersChart;
 let revenueChart;
+let revenueTrendChart;
 let feedbacks = [];
 
 // Notification Sound
@@ -97,6 +123,7 @@ async function loadOrders(){
             const previousCount = orders.length;
 
             orders = result.orders;
+            currentPage = 1;
 
 // New order detected
 if(lastOrderCount > 0 &&
@@ -122,7 +149,7 @@ if(lastOrderCount > 0 &&
 lastOrderCount = orders.length;
 
             // Update badge
-            const badge = document.getElementById("liveOrdersBadge");
+           
 
 if (badge) {
     badge.textContent = orders.length;
@@ -146,9 +173,10 @@ notificationSound.play();
 
             loadRevenueChart();
 
+loadRevenueTrendChart();
         }else{
 
-            alert(result.message);
+            showToast(result.message);
 
         }
 
@@ -157,9 +185,7 @@ notificationSound.play();
     catch(error){
 
         console.log(error);
-
-        alert("Unable to connect to server.");
-
+showToast("Unable to connect to server.");
     }
 
 }
@@ -190,7 +216,6 @@ function showNotification(message){
 // ==========================================
 // RENDER ORDERS
 // ==========================================
-
 function renderOrders(){
 
     ordersBody.innerHTML = "";
@@ -198,24 +223,22 @@ function renderOrders(){
     if(orders.length === 0){
 
         ordersBody.innerHTML = `
-
         <tr>
-
             <td colspan="11">
-
                 No Orders Found
-
             </td>
-
         </tr>
-
         `;
 
         return;
-
     }
 
-    orders.forEach(function(order){
+    const start = (currentPage - 1) * ordersPerPage;
+    const end = start + ordersPerPage;
+
+    const pageOrders = orders.slice(start, end);
+
+    pageOrders.forEach(function(order){
 
         ordersBody.innerHTML += `
 
@@ -248,33 +271,42 @@ function renderOrders(){
                 </span>
 
             </td>
-<td>
 
-<button
-class="action-btn"
-onclick="printKitchenReceipt('${order.order_id}')">
+            <td>
 
-🖨 Print
+                <button
+                class="action-btn"
+                onclick="printKitchenReceipt('${order.order_id}')">
 
-</button>
+                🖨 Print
 
-<br><br>
+                </button>
 
-<button
-class="action-btn"
-onclick="updateOrderStatus('${order.order_id}')">
+                <br><br>
 
-Update
+                <button
+                class="action-btn"
+                onclick="updateOrderStatus('${order.order_id}')">
 
-</button>
+                Update
 
-</td>
-            
+                </button>
+
+            </td>
+
         </tr>
 
         `;
 
     });
+
+    pageNumber.textContent =
+        `Page ${currentPage} of ${Math.ceil(orders.length / ordersPerPage)}`;
+
+    prevPageBtn.disabled = currentPage === 1;
+
+    nextPageBtn.disabled =
+        currentPage === Math.ceil(orders.length / ordersPerPage);
 
 }
 
@@ -308,7 +340,7 @@ async function updateOrderStatus(orderID){
 
         if(result.success){
 
-            alert("Order Updated Successfully!");
+           showToast("Order Updated Successfully!");
 
             loadOrders();
 
@@ -316,7 +348,7 @@ async function updateOrderStatus(orderID){
 
         else{
 
-            alert(result.message);
+          showToast(result.message);
 
         }
 
@@ -326,18 +358,11 @@ async function updateOrderStatus(orderID){
 
         console.log(error);
 
-        alert("Unable to connect to server.");
+        showToast("Unable to connect to server.");
 
     }
 
 }
-let rotis = 0;
-
-orders.forEach(order => {
-    rotis += Number(order.quantity);
-});
-
-totalRotis.textContent = rotis;
 // ==========================================
 // DASHBOARD CARDS
 // ==========================================
@@ -379,6 +404,71 @@ function updateDashboardCards(){
     totalRotis.textContent = rotis;
 
 }
+// ======================================
+// Average Order Value
+// ======================================
+
+const avg =
+orders.length > 0
+? revenue / orders.length
+: 0;
+
+averageOrder.textContent =
+"₹" + avg.toFixed(2);
+
+// ======================================
+// Completed Percentage
+// ======================================
+
+const completed =
+orders.filter(order =>
+order.order_status === "Completed"
+).length;
+
+const percent =
+orders.length > 0
+? (completed / orders.length) * 100
+: 0;
+
+completedPercent.textContent =
+percent.toFixed(1) + "%";
+
+// ======================================
+// Best Sales Day
+// ======================================
+
+const dayRevenue = {};
+
+orders.forEach(order=>{
+
+    if(!dayRevenue[order.pickup_date]){
+
+        dayRevenue[order.pickup_date]=0;
+
+    }
+
+    dayRevenue[order.pickup_date]+=
+    Number(order.total_amount);
+
+});
+
+let bestDay="--";
+
+let highest=0;
+
+for(const day in dayRevenue){
+
+    if(dayRevenue[day]>highest){
+
+        highest=dayRevenue[day];
+
+        bestDay=day;
+
+    }
+
+}
+
+bestSalesDay.textContent=bestDay;
 
 // ==========================================
 // ORDER ANALYTICS CHART
@@ -525,6 +615,86 @@ function loadRevenueChart(){
                 title:{
                     display:true,
                     text:"Total Revenue ₹" + totalRevenue
+                }
+
+            }
+
+        }
+
+    });
+
+}
+// ==========================================
+// REVENUE TREND (LAST 7 DAYS)
+// ==========================================
+
+function loadRevenueTrendChart(){
+
+    const revenueMap = {};
+
+    // Group revenue by pickup date
+    orders.forEach(order => {
+
+        const date = order.pickup_date;
+
+        if(!revenueMap[date]){
+
+            revenueMap[date] = 0;
+
+        }
+
+        revenueMap[date] += Number(order.total_amount);
+
+    });
+
+    const labels = Object.keys(revenueMap);
+
+    const data = Object.values(revenueMap);
+
+    const ctx = document
+        .getElementById("revenueTrendChart")
+        .getContext("2d");
+
+    if(revenueTrendChart){
+
+        revenueTrendChart.destroy();
+
+    }
+
+    revenueTrendChart = new Chart(ctx,{
+
+        type:"line",
+
+        data:{
+
+            labels:labels,
+
+            datasets:[{
+
+                label:"Revenue (₹)",
+
+                data:data,
+
+                borderColor:"#2ecc71",
+
+                backgroundColor:"rgba(46,204,113,0.2)",
+
+                fill:true,
+
+                tension:0.4
+
+            }]
+
+        },
+
+        options:{
+
+            responsive:true,
+
+            plugins:{
+
+                legend:{
+                    display:true
                 }
 
             }
@@ -1169,7 +1339,7 @@ async function deleteFeedback(id){
 
     if(result.success){
 
-        alert("Review Deleted");
+      showToast("Review Deleted");
 
         loadFeedback();
 
@@ -1191,7 +1361,7 @@ function printKitchenReceipt(orderId){
 
     if(!order){
 
-        alert("Order not found.");
+        showToast("Order not found.");
 
         return;
 
@@ -1444,3 +1614,28 @@ printWindow.onload = function(){
 
 }
 }
+
+
+prevPageBtn.addEventListener("click", function(){
+
+    if(currentPage > 1){
+
+        currentPage--;
+
+        renderOrders();
+
+    }
+
+});
+
+nextPageBtn.addEventListener("click", function(){
+
+    if(currentPage < Math.ceil(orders.length / ordersPerPage)){
+
+        currentPage++;
+
+        renderOrders();
+
+    }
+
+});

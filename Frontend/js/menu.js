@@ -1,4 +1,4 @@
-const API = "http://127.0.0.1:5000/api/menu";
+const API = "https://rotiready-production-9cd6.up.railway.app/api/menu";
 
 let allMenu = [];
 
@@ -34,8 +34,6 @@ function loadMenu() {
 
 function filterMenu(category) {
 
-    // Active button
-
     document.querySelectorAll(".menu-tab").forEach(btn => {
 
         btn.classList.remove("active");
@@ -59,48 +57,49 @@ function filterMenu(category) {
                 No Menu Available
             </h3>
         `;
-
     }
 
     menu.forEach(item => {
-html += `
-<div class="food-card">
 
-    <img
-        src="${
-item.image
-? `http://127.0.0.1:5000/uploads/${item.image}`
-: 'images/no-image.png'
-}"
-        class="food-image"
-        alt="${item.item_name}">
+        html += `
+        <div class="food-card">
 
-    <div class="food-content">
+            <img
+                src="${
+                    item.image
+                    ? `https://rotiready-production-9cd6.up.railway.app/uploads/${item.image}`
+                    : 'images/no-image.png'
+                }"
+                class="food-image"
+                alt="${item.item_name}">
 
-        <h3 class="food-name">
-            ${item.item_name}
-        </h3>
+            <div class="food-content">
 
-        <div class="food-price">
-            ₹${item.price}
+                <h3 class="food-name">
+                    ${item.item_name}
+                </h3>
+
+                <div class="food-price">
+                    ₹${item.price}
+                </div>
+
+                <button
+                    class="order-btn"
+                    onclick="selectItem('${item.item_name}', ${item.price})">
+                    🛒 Order Now
+                </button>
+
+            </div>
+
         </div>
-
-      <button
-    class="order-btn"
-    onclick="selectItem('${item.item_name}', ${item.price})">
-    🛒 Order Now
-</button>
-
-    </div>
-
-</div>
-`;
+        `;
 
     });
 
     document.getElementById("menuList").innerHTML = html;
 
 }
+
 // ===============================
 // SELECT ITEM
 // ===============================

@@ -1,4 +1,4 @@
-const API = "http://127.0.0.1:5000/api/menu";
+const API = "https://rotiready-production-9cd6.up.railway.app/api/menu";
 
 loadMenu();
 
@@ -22,7 +22,7 @@ html+=`
 
 <td>
 <img
-src="http://127.0.0.1:5000/uploads/${item.image}">
+src="https://rotiready-production-9cd6.up.railway.app/uploads/${item.image}"
 </td>
 
 <td>${item.item_name}</td>

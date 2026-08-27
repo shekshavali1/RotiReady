@@ -1,7 +1,7 @@
 async function loadReport(){
 
     const response = await fetch(
-        "http://127.0.0.1:5000/api/admin/daily-report"
+        "https://rotiready-production-9cd6.up.railway.app/api/admin/daily-report"
     );
 
     const result = await response.json();

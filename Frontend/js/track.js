@@ -1,307 +1,478 @@
+// ==========================================
+// SSV HOTEL - TRACK ORDER
+// ==========================================
+
+let currentOrderID = "";
+let currentMobile = "";
+
+const trackForm =
+    document.getElementById("trackForm");
+
+const resultCard =
+    document.getElementById("resultCard");
 
 // ==========================================
 // TRACK ORDER
 // ==========================================
-let currentOrderID = "";
-let currentMobile = "";
 
-const trackForm = document.getElementById("trackForm");
+trackForm.addEventListener(
+    "submit",
+    async function(e) {
 
-const resultCard = document.getElementById("resultCard");
+        e.preventDefault();
 
-trackForm.addEventListener("submit", async function(e){
+        const orderID =
+            document
+                .getElementById("orderID")
+                .value
+                .trim();
 
-    e.preventDefault();
+        const mobile =
+            document
+                .getElementById("mobile")
+                .value
+                .trim();
 
-    const orderID =
-        document.getElementById("orderID").value.trim();
+        try {
 
-    const mobile =
-        document.getElementById("mobile").value.trim();
+            const response =
+                await fetch(
+                    `${API_BASE}/api/track-order`,
+                    {
 
-    try{
+                        method: "POST",
 
-        const response = await fetch(
-            "http://127.0.0.1:5000/api/track-order",
-            {
-                method:"POST",
+                        headers: {
 
-                headers:{
-                    "Content-Type":"application/json"
-                },
+                            "Content-Type":
+                                "application/json"
 
-                body:JSON.stringify({
+                        },
 
-                    order_id:orderID,
+                        body: JSON.stringify({
 
-                    mobile:mobile
+                            order_id:
+                                orderID,
 
-                })
+                            mobile:
+                                mobile
+
+                        })
+
+                    }
+                );
+
+            const result =
+                await response.json();
+
+            if (result.success) {
+
+                currentOrderID =
+                    orderID;
+
+                currentMobile =
+                    mobile;
+
+                showOrder(result.order);
+
+                updateTimeline(
+                    result.order.order_status
+                );
+
+                updateStatusMessage(
+                    result.order.order_status
+                );
+
             }
-        );
 
-        const result = await response.json();
+            else {
 
-        if(result.success){
+                alert(
+                    result.message ||
+                    "Order not found."
+                );
 
-    currentOrderID = orderID;
-    currentMobile = mobile;
+            }
 
-    showOrder(result.order);
+        }
 
-updateTimeline(result.order.order_status);
+        catch(error) {
 
-updateStatusMessage(result.order.order_status);
-}
+            console.error(
+                "Track Error:",
+                error
+            );
 
-        else{
-
-            alert(result.message);
+            alert(
+                "Unable to connect to server."
+            );
 
         }
 
     }
-
-    catch(error){
-
-    console.error(error);
-
-    alert(error);
-
-}
-});
-// ==========================================
-// SHOW ORDER DETAILS
-// ==========================================
-function showOrder(order){
-
-    resultCard.style.display = "block";
-
-    document.getElementById("showOrderID").textContent =
-        order.order_id;
-
-    document.getElementById("showCustomer").textContent =
-        order.full_name;
-
-    document.getElementById("showStatus").textContent =
-        order.order_status;
-
-    document.getElementById("showDate").textContent =
-        order.pickup_date;
-
-    document.getElementById("showTime").textContent =
-        order.pickup_time;
-        startCountdown(
-    order.pickup_date,
-    order.pickup_time
 );
-document.getElementById("showMobile").textContent =
-    order.mobile;
 
-document.getElementById("showQuantity").textContent =
-    order.quantity + " Rotis";
+// ==========================================
+// SHOW ORDER
+// ==========================================
 
-document.getElementById("showTotal").textContent =
-    "₹" + order.total_amount;
+function showOrder(order) {
 
-document.getElementById("showAdvance").textContent =
-    "₹" + order.advance_amount;
+    resultCard.style.display =
+        "block";
 
-document.getElementById("showRemaining").textContent =
-    "₹" + order.remaining_amount;
+    document.getElementById(
+        "showOrderID"
+    ).textContent =
+        order.order_id || "-";
 
-document.getElementById("showPayment").textContent =
-    order.payment_status;
+    document.getElementById(
+        "showCustomer"
+    ).textContent =
+        order.customer_name ||
+        order.full_name ||
+        "-";
+
+    document.getElementById(
+        "showStatus"
+    ).textContent =
+        order.order_status || "-";
+
+    document.getElementById(
+        "showDate"
+    ).textContent =
+        order.pickup_date || "-";
+
+    document.getElementById(
+        "showTime"
+    ).textContent =
+        order.pickup_time || "-";
+
+    document.getElementById(
+        "showMobile"
+    ).textContent =
+        order.mobile || "-";
+
+    document.getElementById(
+        "showQuantity"
+    ).textContent =
+        (order.quantity || 0) +
+        " Rotis";
+
+    document.getElementById(
+        "showTotal"
+    ).textContent =
+        "₹" +
+        (order.total_amount || 0);
+
+    document.getElementById(
+        "showAdvance"
+    ).textContent =
+        "₹" +
+        (order.advance_amount || 0);
+
+    document.getElementById(
+        "showRemaining"
+    ).textContent =
+        "₹" +
+        (order.remaining_amount || 0);
+
+    document.getElementById(
+        "showPayment"
+    ).textContent =
+        order.payment_status || "-";
+
+    if (
+        order.pickup_date &&
+        order.pickup_time
+    ) {
+
+        startCountdown(
+            order.pickup_date,
+            order.pickup_time
+        );
+
+    }
+
 }
+
 // ==========================================
-// UPDATE TIMELINE
+// TIMELINE
 // ==========================================
 
-function updateTimeline(status){
+function updateTimeline(status) {
 
     document
         .querySelectorAll(".timeline-item")
         .forEach(item => {
 
-            item.classList.remove("active");
+            item.classList.remove(
+                "active"
+            );
 
         });
 
-    // Order Confirmed
-    document
-        .querySelector(".timeline-item")
-        .classList.add("active");
+    const first =
+        document.querySelector(
+            ".timeline-item"
+        );
 
-    // Preparing
-    if(status === "Preparing" ||
-       status === "Ready" ||
-       status === "Completed"){
+    if (first) {
 
-        document
-            .getElementById("preparingStep")
-            .classList.add("active");
+        first.classList.add(
+            "active"
+        );
 
     }
 
-    // Ready
-    if(status === "Ready" ||
-       status === "Completed"){
+    if (
+        status === "Preparing" ||
+        status === "Ready" ||
+        status === "Completed"
+    ) {
 
         document
-            .getElementById("readyStep")
-            .classList.add("active");
+            .getElementById(
+                "preparingStep"
+            )
+            ?.classList.add("active");
 
     }
 
-    // Completed
-    if(status === "Completed"){
+    if (
+        status === "Ready" ||
+        status === "Completed"
+    ) {
 
         document
-            .getElementById("completedStep")
-            .classList.add("active");
+            .getElementById(
+                "readyStep"
+            )
+            ?.classList.add("active");
 
     }
+
+    if (status === "Completed") {
+
+        document
+            .getElementById(
+                "completedStep"
+            )
+            ?.classList.add("active");
+
+    }
+
 }
 
 // ==========================================
-// PICKUP COUNTDOWN
+// COUNTDOWN
 // ==========================================
 
 let countdownTimer;
 
-function startCountdown(date, time){
+function startCountdown(
+    date,
+    time
+) {
 
     clearInterval(countdownTimer);
 
-    const pickup = new Date(date + " " + time);
+    const pickup =
+        new Date(
+            date + " " + time
+        );
 
-    countdownTimer = setInterval(function(){
+    countdownTimer =
+        setInterval(function() {
 
-        const now = new Date();
+            const now =
+                new Date();
 
-        const diff = pickup - now;
+            const diff =
+                pickup - now;
 
-        if(diff <= 0){
+            if (diff <= 0) {
 
-            document.getElementById("countdown").innerHTML =
-            "🎉 Ready for Pickup";
+                document.getElementById(
+                    "countdown"
+                ).innerHTML =
+                    "🎉 Ready for Pickup";
 
-            clearInterval(countdownTimer);
+                clearInterval(
+                    countdownTimer
+                );
+
+                return;
+
+            }
+
+            const hours =
+                Math.floor(
+                    diff /
+                    (1000 * 60 * 60)
+                );
+
+            const minutes =
+                Math.floor(
+                    (
+                        diff %
+                        (1000 * 60 * 60)
+                    ) /
+                    (1000 * 60)
+                );
+
+            const seconds =
+                Math.floor(
+                    (
+                        diff %
+                        (1000 * 60)
+                    ) /
+                    1000
+                );
+
+            document.getElementById(
+                "countdown"
+            ).innerHTML =
+
+                hours + "h " +
+
+                minutes + "m " +
+
+                seconds + "s";
+
+        }, 1000);
+
+}
+
+// ==========================================
+// LIVE ORDER STATUS
+// ==========================================
+
+setInterval(
+    async function() {
+
+        if (
+            currentOrderID === "" ||
+            currentMobile === ""
+        ) {
 
             return;
 
         }
 
-        const hours =
-        Math.floor(diff / (1000 * 60 * 60));
+        try {
 
-        const minutes =
-        Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const response =
+                await fetch(
+                    `${API_BASE}/api/track-order`,
+                    {
 
-        const seconds =
-        Math.floor((diff % (1000 * 60)) / 1000);
+                        method: "POST",
 
-        document.getElementById("countdown").innerHTML =
+                        headers: {
 
-            hours + "h " +
+                            "Content-Type":
+                                "application/json"
 
-            minutes + "m " +
+                        },
 
-            seconds + "s";
+                        body: JSON.stringify({
 
-    },1000);
+                            order_id:
+                                currentOrderID,
 
-}
-// ==========================================
-// LIVE ORDER STATUS (AUTO REFRESH)
-// ==========================================
+                            mobile:
+                                currentMobile
 
-setInterval(async function(){
+                        })
 
-    if(currentOrderID === "" || currentMobile === ""){
-        return;
-    }
+                    }
+                );
 
-    try{
+            const result =
+                await response.json();
 
-        const response = await fetch(
-            "http://127.0.0.1:5000/api/track-order",
-            {
-                method: "POST",
+            if (result.success) {
 
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                showOrder(
+                    result.order
+                );
 
-                body: JSON.stringify({
+                updateTimeline(
+                    result.order
+                        .order_status
+                );
 
-                    order_id: currentOrderID,
-
-                    mobile: currentMobile
-
-                })
+                updateStatusMessage(
+                    result.order
+                        .order_status
+                );
 
             }
-        );
-
-        const result = await response.json();
-
-        if(result.success){
-
-          
-            showOrder(result.order);
-
-updateTimeline(result.order.order_status);
-
-updateStatusMessage(result.order.order_status);
 
         }
 
-    }
+        catch(error) {
 
-    catch(error){
+            console.log(error);
 
-        console.log(error);
+        }
 
-    }
+    },
+    5000
+);
 
-}, 5000);
 // ==========================================
-// LIVE STATUS MESSAGE
+// STATUS MESSAGE
 // ==========================================
 
-function updateStatusMessage(status){
+function updateStatusMessage(status) {
 
-    const box = document.getElementById("statusMessage");
+    const box =
+        document.getElementById(
+            "statusMessage"
+        );
 
-    box.style.display = "block";
+    if (!box) {
+        return;
+    }
 
-    box.className = "status-message";
+    box.style.display =
+        "block";
 
-    if(status === "Preparing"){
+    box.className =
+        "status-message";
 
-        box.classList.add("preparing");
+    if (status === "Preparing") {
+
+        box.classList.add(
+            "preparing"
+        );
 
         box.innerHTML =
-        "👨‍🍳 Your delicious rotis are being prepared.";
+            "👨‍🍳 Your delicious rotis are being prepared.";
 
     }
 
-    else if(status === "Ready"){
+    else if (status === "Ready") {
 
-        box.classList.add("ready");
+        box.classList.add(
+            "ready"
+        );
 
         box.innerHTML =
-        "🎉 Your order is ready! Please collect it from SSV HOTEL.";
+            "🎉 Your order is ready! Please collect it from SSV HOTEL.";
 
     }
 
-    else if(status === "Completed"){
+    else if (status === "Completed") {
 
-        box.classList.add("completed");
+        box.classList.add(
+            "completed"
+        );
 
         box.innerHTML =
-        "✅ Thank you! Your order has been completed.";
+            "✅ Thank you! Your order has been completed.";
 
     }
 

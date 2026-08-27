@@ -113,7 +113,7 @@ async function loadOrders(){
     try{
 
         const response = await 
-    fetch("http://127.0.0.1:5000/api/orders")
+   fetch("https://rotiready-production-9cd6.up.railway.app/api/orders")
 
         const result = await response.json();
 
@@ -328,7 +328,7 @@ async function updateOrderStatus(id) {
     try {
 
         const response = await fetch(
-            `http://127.0.0.1:5000/api/orders/${id}`,
+            `https://rotiready-production-9cd6.up.railway.app/api/orders/${id}`,
             {
                 method: "PUT",
                 headers: {
@@ -1286,8 +1286,8 @@ async function loadFeedback(){
     try{
 
         const response = await fetch(
-            "http://127.0.0.1:5000/api/admin/feedback"
-        );
+    "https://rotiready-production-9cd6.up.railway.app/api/admin/feedback"
+);
 
         const result = await response.json();
 
@@ -1366,9 +1366,8 @@ async function deleteFeedback(id){
         return;
 
     }
-
-    const response = await fetch(
-        "http://127.0.0.1:5000/api/admin/delete-feedback",
+const response = await fetch(
+    "https://rotiready-production-9cd6.up.railway.app/api/admin/delete-feedback",
         {
             method:"POST",
 

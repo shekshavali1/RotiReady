@@ -1,6 +1,6 @@
-// ===============================
+// ==========================================
 // SSV HOTEL - ORDER PAGE
-// ===============================
+// ==========================================
 
 const selectedItem = JSON.parse(
     localStorage.getItem("selectedItem")
@@ -14,69 +14,104 @@ if (!selectedItem) {
 
 }
 
-// ===============================
-// Elements
-// ===============================
+// ==========================================
+// ELEMENTS
+// ==========================================
 
-const minusBtn = document.getElementById("minusBtn");
-const plusBtn = document.getElementById("plusBtn");
-const quantityInput = document.getElementById("quantity");
+const minusBtn =
+    document.getElementById("minusBtn");
 
-const summaryQuantity = document.getElementById("summaryQuantity");
-const totalAmount = document.getElementById("totalAmount");
-const advanceAmount = document.getElementById("advanceAmount");
-const remainingAmount = document.getElementById("remainingAmount");
+const plusBtn =
+    document.getElementById("plusBtn");
 
-const pickupDate = document.getElementById("pickupDate");
-const continueBtn = document.getElementById("continueBtn");
-const loadingSpinner = document.getElementById("loadingSpinner");
+const quantityInput =
+    document.getElementById("quantity");
 
-// ===============================
-// Minimum Date
-// ===============================
+const summaryQuantity =
+    document.getElementById("summaryQuantity");
 
-pickupDate.min = new Date().toISOString().split("T")[0];
+const totalAmount =
+    document.getElementById("totalAmount");
 
-// ===============================
-// Update Summary
-// ===============================
+const advanceAmount =
+    document.getElementById("advanceAmount");
+
+const remainingAmount =
+    document.getElementById("remainingAmount");
+
+const pickupDate =
+    document.getElementById("pickupDate");
+
+const continueBtn =
+    document.getElementById("continueBtn");
+
+const loadingSpinner =
+    document.getElementById("loadingSpinner");
+
+// ==========================================
+// MINIMUM DATE
+// ==========================================
+
+pickupDate.min =
+    new Date().toISOString().split("T")[0];
+
+// ==========================================
+// UPDATE SUMMARY
+// ==========================================
 
 function updateSummary() {
 
-    const qty = parseInt(quantityInput.value);
+    const qty =
+        parseInt(quantityInput.value) || 1;
 
-    const total = qty * selectedItem.price;
+    const total =
+        qty * Number(selectedItem.price);
 
-    const advance = total / 2;
+    const advance =
+        total / 2;
 
-    const remaining = total - advance;
+    const remaining =
+        total - advance;
 
-    summaryQuantity.textContent = qty;
+    summaryQuantity.textContent =
+        qty;
 
-    totalAmount.textContent = "₹" + total;
+    totalAmount.textContent =
+        "₹" + total;
 
-    advanceAmount.textContent = "₹" + advance;
+    advanceAmount.textContent =
+        "₹" + advance;
 
-    remainingAmount.textContent = "₹" + remaining;
+    remainingAmount.textContent =
+        "₹" + remaining;
 
 }
-// ===============================
-// Quantity Buttons
-// ===============================
 
-plusBtn.addEventListener("click", () => {
+// ==========================================
+// PLUS
+// ==========================================
 
-    quantityInput.value++;
+plusBtn.addEventListener("click", function() {
+
+    quantityInput.value =
+        parseInt(quantityInput.value) + 1;
 
     updateSummary();
 
 });
 
-minusBtn.addEventListener("click", () => {
+// ==========================================
+// MINUS
+// ==========================================
 
-    if (quantityInput.value > 1) {
+minusBtn.addEventListener("click", function() {
 
-        quantityInput.value--;
+    if (
+        parseInt(quantityInput.value) > 1
+    ) {
+
+        quantityInput.value =
+            parseInt(quantityInput.value) - 1;
 
         updateSummary();
 
@@ -84,197 +119,291 @@ minusBtn.addEventListener("click", () => {
 
 });
 
-// ===============================
-// Continue Button
-// ===============================
+// ==========================================
+// CONTINUE
+// ==========================================
 
-continueBtn.addEventListener("click", function () {
+continueBtn.addEventListener(
+    "click",
+    function() {
 
-    const name = document.getElementById("customerName").value.trim();
+        const name =
+            document
+                .getElementById("customerName")
+                .value
+                .trim();
 
-    const mobile = document.getElementById("mobileNumber").value.trim();
+        const mobile =
+            document
+                .getElementById("mobileNumber")
+                .value
+                .trim();
 
-    const date = document.getElementById("pickupDate").value;
+        const date =
+            document
+                .getElementById("pickupDate")
+                .value;
 
-    const time = document.getElementById("pickupTime").value;
+        const time =
+            document
+                .getElementById("pickupTime")
+                .value;
 
-    const instructions = document.getElementById("instructions").value;
+        const instructions =
+            document
+                .getElementById("instructions")
+                .value
+                .trim();
 
-    const quantity = parseInt(quantityInput.value);
+        const quantity =
+            parseInt(quantityInput.value);
 
-    if (name === "") {
+        if (name === "") {
 
-        showToast("Please enter your name", "warning");
+            showToast(
+                "Please enter your name",
+                "warning"
+            );
 
-        return;
+            return;
 
-    }
+        }
 
-    if (!/^[0-9]{10}$/.test(mobile)) {
+        if (!/^[0-9]{10}$/.test(mobile)) {
 
-        showToast("Enter valid mobile number", "warning");
+            showToast(
+                "Enter valid mobile number",
+                "warning"
+            );
 
-        return;
+            return;
 
-    }
+        }
 
-    if (date === "") {
+        if (date === "") {
 
-        showToast("Select pickup date", "warning");
+            showToast(
+                "Select pickup date",
+                "warning"
+            );
 
-        return;
+            return;
 
-    }
+        }
 
-    if (time === "") {
+        if (time === "") {
 
-        showToast("Select pickup time", "warning");
+            showToast(
+                "Select pickup time",
+                "warning"
+            );
 
-        return;
+            return;
 
-    }
-const total = quantity * selectedItem.price;
+        }
 
-    const advance = total / 2;
+        const total =
+            quantity * Number(selectedItem.price);
 
-    const remaining = total - advance;
+        const advance =
+            total / 2;
 
-    const order = {
+        const remaining =
+            total - advance;
 
-    customerName: name,
+        const order = {
 
-    mobile: mobile,
+            customerName: name,
 
-    itemName: selectedItem.name,
+            mobile: mobile,
 
-    pickupDate: date,
+            itemName: selectedItem.name,
 
-    pickupTime: time,
+            pickupDate: date,
 
-    instructions: instructions,
+            pickupTime: time,
 
-    quantity: quantity,
+            instructions: instructions,
 
-    total: total,
+            quantity: quantity,
 
-    advance: advance,
+            total: total,
 
-    remaining: remaining
+            advance: advance,
 
-};
+            remaining: remaining
 
-    if (loadingSpinner) {
-
-        loadingSpinner.style.display = "flex";
-
-    }
-
-    fetch("http://127.0.0.1:5000/api/order", {
-
-        method: "POST",
-
-        headers: {
-
-            "Content-Type": "application/json"
-
-        },
-body: JSON.stringify({
-    customer_name: name,
-    mobile: mobile,
-    item_name: selectedItem.name,
-    quantity: quantity,
-    total_amount: total,
-    pickup_date: date,
-    pickup_time: time,
-    instructions: instructions
-})
-    })
-
-    .then(res => res.json())
-
-    .then(result => {
+        };
 
         if (loadingSpinner) {
 
-            loadingSpinner.style.display = "none";
+            loadingSpinner.style.display =
+                "flex";
 
         }
 
-        console.log(result);
+        fetch(`${API_BASE}/api/order`, {
 
-        if (result.success) {
+            method: "POST",
 
-            order.orderID = result.order_id;
+            headers: {
 
-            localStorage.setItem("orderID", result.order_id);
+                "Content-Type":
+                    "application/json"
 
-            localStorage.setItem("currentOrder", JSON.stringify(order));
+            },
 
-            showToast("Order Created Successfully");
+            body: JSON.stringify({
 
-            setTimeout(function(){
+                customer_name: name,
 
-                window.location.href = "payment.html";
+                mobile: mobile,
 
-            },800);
+                item_name: selectedItem.name,
 
-        }
+                quantity: quantity,
 
-        else{
+                total_amount: total,
 
-            alert(result.error || result.message);
+                pickup_date: date,
 
-        }
+                pickup_time: time,
 
-    })
+                instructions: instructions
 
-    .catch(err=>{
+            })
 
-        if (loadingSpinner) {
+        })
 
-            loadingSpinner.style.display = "none";
+        .then(res => res.json())
 
-        }
+        .then(result => {
 
-        console.error(err);
+            if (loadingSpinner) {
 
-        alert("Server Connection Failed");
+                loadingSpinner.style.display =
+                    "none";
 
-    });
+            }
 
-});
+            console.log(result);
 
-// ===============================
-// Initial Summary
-// ===============================
+            if (result.success) {
+
+                order.orderID =
+                    result.order_id;
+
+                order.orderStatus =
+                    "Pending";
+
+                order.paymentStatus =
+                    "Pending";
+
+                localStorage.setItem(
+                    "orderID",
+                    result.order_id
+                );
+
+                localStorage.setItem(
+                    "currentOrder",
+                    JSON.stringify(order)
+                );
+
+                showToast(
+                    "Order Created Successfully"
+                );
+
+                setTimeout(function() {
+
+                    window.location.href =
+                        "payment.html";
+
+                }, 800);
+
+            }
+
+            else {
+
+                alert(
+                    result.error ||
+                    result.message ||
+                    "Order creation failed."
+                );
+
+            }
+
+        })
+
+        .catch(error => {
+
+            if (loadingSpinner) {
+
+                loadingSpinner.style.display =
+                    "none";
+
+            }
+
+            console.error(
+                "Order Error:",
+                error
+            );
+
+            alert(
+                "Server Connection Failed"
+            );
+
+        });
+
+    }
+);
+
+// ==========================================
+// INITIAL SUMMARY
+// ==========================================
 
 updateSummary();
 
-// ===============================
-// Hotel Opening Time
-// ===============================
+// ==========================================
+// HOTEL STATUS
+// ==========================================
 
-function checkHotelStatus(){
+function checkHotelStatus() {
 
-    const hour = new Date().getHours();
+    const hour =
+        new Date().getHours();
 
-    const closedBox = document.getElementById("hotelClosedBox");
+    const closedBox =
+        document.getElementById(
+            "hotelClosedBox"
+        );
 
-    const orderContainer = document.querySelector(".order-container");
+    const orderContainer =
+        document.querySelector(
+            ".order-container"
+        );
 
-    if(hour>=0 && hour<2 || hour>=6 && hour<24){
+    if (!closedBox || !orderContainer) {
+        return;
+    }
 
-        closedBox.style.display="none";
+    // Open: 3 PM - 10 PM
+    if (hour >= 15 && hour < 22) {
 
-        orderContainer.style.display="flex";
+        closedBox.style.display =
+            "none";
+
+        orderContainer.style.display =
+            "flex";
 
     }
 
-    else{
+    else {
 
-        closedBox.style.display="block";
+        closedBox.style.display =
+            "block";
 
-        orderContainer.style.display="none";
+        orderContainer.style.display =
+            "none";
 
     }
 
@@ -282,4 +411,7 @@ function checkHotelStatus(){
 
 checkHotelStatus();
 
-setInterval(checkHotelStatus,60000);
+setInterval(
+    checkHotelStatus,
+    60000
+);

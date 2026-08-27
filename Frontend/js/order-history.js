@@ -3,7 +3,7 @@ async function loadHistory() {
     const mobile = document.getElementById("mobile").value;
 
     const response = await fetch(
-        "http://127.0.0.1:5000/api/order-history",
+        "https://rotiready-production-9cd6.up.railway.app/api/order-history",
         {
             method: "POST",
             headers: {

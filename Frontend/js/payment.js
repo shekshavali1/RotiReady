@@ -1,85 +1,196 @@
 // ==========================================
-// SSV HOTEL PAYMENT PAGE
+// SSV HOTEL - PAYMENT PAGE
 // ==========================================
 
-const orderData = localStorage.getItem("currentOrder");
+const orderData =
+    localStorage.getItem("currentOrder");
 
 if (!orderData) {
+
     alert("No order found.");
-    window.location.href = "order.html";
+
+    window.location.href =
+        "order.html";
+
 }
 
-const order = JSON.parse(orderData);
+const order =
+    JSON.parse(orderData);
 
-// Show Order Details
-document.getElementById("payName").textContent = order.customerName;
-document.getElementById("payMobile").textContent = order.mobile;
-document.getElementById("payItem").textContent = order.itemName;
-document.getElementById("payQuantity").textContent = order.quantity;
-document.getElementById("payTotal").textContent = "₹" + order.total;
-document.getElementById("payAdvance").textContent = "₹" + order.advance;
+// ==========================================
+// SHOW ORDER
+// ==========================================
 
-// Payment Button
-const payBtn = document.getElementById("payNowBtn");
+document.getElementById(
+    "payName"
+).textContent =
+    order.customerName || "-";
 
-payBtn.addEventListener("click", function () {
+document.getElementById(
+    "payMobile"
+).textContent =
+    order.mobile || "-";
 
-    payBtn.disabled = true;
-    payBtn.innerHTML = "Processing Payment...";
+document.getElementById(
+    "payItem"
+).textContent =
+    order.itemName || "-";
 
-    setTimeout(function () {
+document.getElementById(
+    "payQuantity"
+).textContent =
+    order.quantity || 0;
 
-        order.paymentStatus = "Paid";
-        order.orderStatus = "Preparing";
-        order.paymentTime = new Date().toLocaleString();
-        order.orderID = localStorage.getItem("orderID");
+document.getElementById(
+    "payTotal"
+).textContent =
+    "₹" + (order.total || 0);
 
-        fetch("http://127.0.0.1:5000/api/payment", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                order_id: order.orderID,
-                paid_amount: order.advance,
-                payment_method: document.querySelector(
-                    'input[name="paymentMethod"]:checked'
-                ).value
-            })
-        })
+document.getElementById(
+    "payAdvance"
+).textContent =
+    "₹" + (order.advance || 0);
 
-        .then(res => res.json())
+// ==========================================
+// PAYMENT
+// ==========================================
 
-        .then(data => {
+const payBtn =
+    document.getElementById("payNowBtn");
 
-            console.log(data);
+payBtn.addEventListener(
+    "click",
+    function() {
 
-            localStorage.setItem(
-                "currentOrder",
-                JSON.stringify(order)
+        const paymentMethod =
+            document.querySelector(
+                'input[name="paymentMethod"]:checked'
             );
 
-            if (typeof showToast === "function") {
-                showToast("✅ Payment Successful");
-            }
+        if (!paymentMethod) {
 
-            setTimeout(() => {
-                window.location.href = "receipt.html";
-            }, 800);
+            alert(
+                "Please select a payment method."
+            );
 
-        })
+            return;
 
-        .catch(err => {
+        }
 
-            console.error(err);
+        payBtn.disabled = true;
 
-            alert("Payment update failed.");
+        payBtn.innerHTML =
+            "Processing Payment...";
 
-            payBtn.disabled = false;
-            payBtn.innerHTML = "💳 Pay Advance Now";
+        setTimeout(function() {
 
-        });
+            fetch(`${API_BASE}/api/payment`, {
 
-    }, 2000);
+                method: "POST",
 
-});
+                headers: {
+
+                    "Content-Type":
+                        "application/json"
+
+                },
+
+                body: JSON.stringify({
+
+                    order_id:
+                        order.orderID ||
+                        localStorage.getItem("orderID"),
+
+                    paid_amount:
+                        order.advance,
+
+                    payment_method:
+                        paymentMethod.value
+
+                })
+
+            })
+
+            .then(res => res.json())
+
+            .then(data => {
+
+                console.log(data);
+
+                if (data.success) {
+
+                    order.paymentStatus =
+                        "Paid";
+
+                    order.orderStatus =
+                        "Preparing";
+
+                    order.paymentTime =
+                        new Date()
+                            .toLocaleString();
+
+                    localStorage.setItem(
+                        "currentOrder",
+                        JSON.stringify(order)
+                    );
+
+                    if (
+                        typeof showToast ===
+                        "function"
+                    ) {
+
+                        showToast(
+                            "✅ Payment Successful"
+                        );
+
+                    }
+
+                    setTimeout(() => {
+
+                        window.location.href =
+                            "receipt.html";
+
+                    }, 800);
+
+                }
+
+                else {
+
+                    alert(
+                        data.message ||
+                        "Payment failed."
+                    );
+
+                    payBtn.disabled =
+                        false;
+
+                    payBtn.innerHTML =
+                        "💳 Pay Advance Now";
+
+                }
+
+            })
+
+            .catch(error => {
+
+                console.error(
+                    "Payment Error:",
+                    error
+                );
+
+                alert(
+                    "Payment update failed."
+                );
+
+                payBtn.disabled =
+                    false;
+
+                payBtn.innerHTML =
+                    "💳 Pay Advance Now";
+
+            });
+
+        }, 2000);
+
+    }
+);

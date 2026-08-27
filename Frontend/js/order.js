@@ -2,7 +2,17 @@
 // SSV HOTEL - ORDER PAGE
 // ===============================
 
-const PRICE_PER_ROTI = 10;
+const selectedItem = JSON.parse(
+    localStorage.getItem("selectedItem")
+);
+
+if (!selectedItem) {
+
+    alert("Please select an item first.");
+
+    window.location.href = "index.html";
+
+}
 
 // ===============================
 // Elements
@@ -35,7 +45,7 @@ function updateSummary() {
 
     const qty = parseInt(quantityInput.value);
 
-    const total = qty * PRICE_PER_ROTI;
+    const total = qty * selectedItem.price;
 
     const advance = total / 2;
 
@@ -50,7 +60,6 @@ function updateSummary() {
     remainingAmount.textContent = "₹" + remaining;
 
 }
-
 // ===============================
 // Quantity Buttons
 // ===============================
@@ -124,8 +133,7 @@ continueBtn.addEventListener("click", function () {
         return;
 
     }
-
-    const total = quantity * PRICE_PER_ROTI;
+const total = quantity * selectedItem.price;
 
     const advance = total / 2;
 
@@ -133,25 +141,27 @@ continueBtn.addEventListener("click", function () {
 
     const order = {
 
-        customerName: name,
+    customerName: name,
 
-        mobile: mobile,
+    mobile: mobile,
 
-        pickupDate: date,
+    itemName: selectedItem.name,
 
-        pickupTime: time,
+    pickupDate: date,
 
-        instructions: instructions,
+    pickupTime: time,
 
-        quantity: quantity,
+    instructions: instructions,
 
-        total: total,
+    quantity: quantity,
 
-        advance: advance,
+    total: total,
 
-        remaining: remaining
+    advance: advance,
 
-    };
+    remaining: remaining
+
+};
 
     if (loadingSpinner) {
 
@@ -168,23 +178,16 @@ continueBtn.addEventListener("click", function () {
             "Content-Type": "application/json"
 
         },
-
-        body: JSON.stringify({
-
-            full_name: name,
-
-            mobile: mobile,
-
-            quantity: quantity,
-
-            pickup_date: date,
-
-            pickup_time: time,
-
-            instructions: instructions
-
-        })
-
+body: JSON.stringify({
+    customer_name: name,
+    mobile: mobile,
+    item_name: selectedItem.name,
+    quantity: quantity,
+    total_amount: total,
+    pickup_date: date,
+    pickup_time: time,
+    instructions: instructions
+})
     })
 
     .then(res => res.json())
@@ -259,7 +262,7 @@ function checkHotelStatus(){
 
     const orderContainer = document.querySelector(".order-container");
 
-    if(hour>=15 && hour<22){
+    if(hour>=0 && hour<2 || hour>=6 && hour<24){
 
         closedBox.style.display="none";
 

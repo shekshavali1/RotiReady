@@ -1613,3 +1613,18 @@ LIVE NOTIFICATION
     margin-bottom:15px;
 
 }
+.cancel-btn{
+
+    background:#dc3545;
+    color:#fff;
+    border:none;
+    padding:8px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    margin-top:6px;
+}
+
+.cancel-btn:hover{
+
+    background:#b02a37;
+}

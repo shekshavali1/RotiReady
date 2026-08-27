@@ -1,483 +1,443 @@
 from flask import Blueprint, request, jsonify
 from config import get_connection
-from services.whatsapp import send_whatsapp
-import random
-import qrcode
-import os
+from datetime import datetime, date, time, timedelta
+import uuid
 
 order_bp = Blueprint("order", __name__)
 
+
 # ==========================================
-# CREATE ORDER
+# PLACE ORDER
 # ==========================================
 
 @order_bp.route("/api/order", methods=["POST"])
-def create_order():
+def place_order():
+
+    connection = None
+    cursor = None
 
     try:
 
         data = request.get_json()
 
-        full_name = data["full_name"]
-        mobile = data["mobile"]
-        quantity = int(data["quantity"])
-        pickup_date = data["pickup_date"]
-        pickup_time = data["pickup_time"]
-        instructions = data.get("instructions", "")
+        print("Received Data:", data)
 
-        # Price Calculation
-        price = 10
-        total = quantity * price
+        # -----------------------------
+        # Validate required fields
+        # -----------------------------
+
+        required_fields = [
+            "customer_name",
+            "mobile",
+            "item_name",
+            "quantity",
+            "total_amount",
+            "pickup_date",
+            "pickup_time"
+        ]
+
+        for field in required_fields:
+
+            if not data.get(field):
+
+                return jsonify({
+                    "success": False,
+                    "message": f"{field} is required"
+                }), 400
+
+        # -----------------------------
+        # Generate unique Order ID
+        # -----------------------------
+
+        order_id = "SSV" + uuid.uuid4().hex[:8].upper()
+
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        # -----------------------------
+        # Amount calculation
+        # -----------------------------
+
+        total = float(data["total_amount"])
+
         advance = total / 2
+
         remaining = total - advance
 
-        # Generate Order ID
-        order_id = "SSV" + str(random.randint(100000, 999999))
+        # -----------------------------
+        # Insert Order
+        # -----------------------------
 
-        # Generate QR Code
-        qr = qrcode.make(f"Order ID: {order_id}")
-
-        qr_folder = os.path.join("static", "qr")
-        os.makedirs(qr_folder, exist_ok=True)
-
-        qr_filename = f"{order_id}.png"
-        qr_path = os.path.join(qr_folder, qr_filename)
-
-        qr.save(qr_path)
-
-        # Database
-        conn = get_connection()
-        cursor = conn.cursor()
-
-        # Check Customer
-        cursor.execute(
-            "SELECT id FROM customers WHERE mobile=%s",
-            (mobile,)
-        )
-
-        customer = cursor.fetchone()
-
-        if customer:
-
-            customer_id = customer["id"]
-
-        else:
-
-            cursor.execute(
-                """
-                INSERT INTO customers
-                (full_name, mobile)
-                VALUES (%s,%s)
-                """,
-                (full_name, mobile)
-            )
-
-            conn.commit()
-
-            customer_id = cursor.lastrowid
-
-        # Save Order
-        cursor.execute(
-            """
+        cursor.execute("""
             INSERT INTO orders
             (
                 order_id,
-                customer_id,
+                customer_name,
+                mobile,
+                item_name,
                 quantity,
                 total_amount,
                 advance_amount,
                 remaining_amount,
                 pickup_date,
                 pickup_time,
-                instructions
+                instructions,
+                payment_status,
+                order_status
             )
             VALUES
-            (%s,%s,%s,%s,%s,%s,%s,%s,%s)
-            """,
             (
-                order_id,
-                customer_id,
-                quantity,
-                total,
-                advance,
-                remaining,
-                pickup_date,
-                pickup_time,
-                instructions
+                %s,%s,%s,%s,%s,%s,%s,%s,%s,
+                %s,%s,%s,%s
             )
-        )
+        """,
+        (
+            order_id,
+            data["customer_name"],
+            data["mobile"],
+            data["item_name"],
+            data["quantity"],
+            total,
+            advance,
+            remaining,
+            data["pickup_date"],
+            data["pickup_time"],
+            data.get("instructions", ""),
+            "Pending",
+            "Pending"
+        ))
 
-        conn.commit()
+        connection.commit()
 
-        # ==========================================
-        # SEND WHATSAPP MESSAGE
-        # ==========================================
+        database_id = cursor.lastrowid
 
-        message = f"""
-🍽️ SSV HOTEL
-
-Hello {full_name},
-
-Your order has been placed successfully.
-
-🆔 Order ID: {order_id}
-
-🍽️ Quantity: {quantity} Rotis
-
-📅 Pickup Date: {pickup_date}
-
-🕒 Pickup Time: {pickup_time}
-
-Thank you for choosing SSV HOTEL ❤️
-"""
-
-        send_whatsapp(mobile, message)
-
-        cursor.close()
-        conn.close()
+        print("Created Order:", order_id)
 
         return jsonify({
 
-    "success": True,
-    "order_id": order_id,
-    "qr_code": f"/static/qr/{order_id}.png",
-    "message": "Order Created Successfully"
+            "success": True,
 
-})
+            "order_id": database_id,
+
+            "order_code": order_id,
+
+            "message": "Order Created Successfully"
+
+        })
 
     except Exception as e:
+
+        if connection:
+            connection.rollback()
+
+        import traceback
+        traceback.print_exc()
 
         return jsonify({
 
             "success": False,
-            "error": str(e)
+
+            "message": str(e)
 
         }), 500
-    # ==========================================
-# TRACK ORDER
+
+    finally:
+
+        if cursor:
+            cursor.close()
+
+        if connection:
+            connection.close()
+
+
+# ==========================================
+# GET ALL ORDERS - ADMIN
 # ==========================================
 
-@order_bp.route("/api/track-order", methods=["POST"])
-def track_order():
+@order_bp.route("/api/orders", methods=["GET"])
+def get_orders():
+
+    connection = None
+    cursor = None
 
     try:
-
-        data = request.get_json()
-
-        order_id = data.get("order_id")
-        mobile = data.get("mobile")
 
         connection = get_connection()
         cursor = connection.cursor()
 
         cursor.execute("""
-            SELECT
-                o.order_id,
-                c.full_name,
-                c.mobile,
-                o.quantity,
-                o.total_amount,
-                o.advance_amount,
-                o.remaining_amount,
-                o.pickup_date,
-                o.pickup_time,
-                o.payment_status,
-                o.order_status
-            FROM orders o
-            JOIN customers c
-            ON o.customer_id = c.id
-            WHERE o.order_id=%s
-            AND c.mobile=%s
-        """, (order_id, mobile))
+            SELECT *
+            FROM orders
+            ORDER BY id DESC
+        """)
 
-        order = cursor.fetchone()
+        orders = cursor.fetchall()
 
-        cursor.close()
-        connection.close()
+        # Convert MySQL date/time objects
+        for order in orders:
 
-        if not order:
+            for key, value in order.items():
 
-            return jsonify({
-                "success": False,
-                "message": "Order not found."
-            })
+                if isinstance(value, timedelta):
 
-        # Convert Decimal/Date/Time to JSON-safe values
-        order["total_amount"] = float(order["total_amount"])
-        order["advance_amount"] = float(order["advance_amount"])
-        order["remaining_amount"] = float(order["remaining_amount"])
-        order["pickup_date"] = str(order["pickup_date"])
-        order["pickup_time"] = str(order["pickup_time"])
+                    order[key] = str(value)
 
-        # QR Code Path
-        order["qr_code"] = f"/static/qr/{order['order_id']}.png"
+                elif isinstance(value, (datetime, date, time)):
+
+                    order[key] = value.isoformat()
+
+                elif value is None:
+
+                    order[key] = ""
 
         return jsonify({
 
             "success": True,
+
+            "orders": orders
+
+        })
+
+    except Exception as e:
+
+        import traceback
+        traceback.print_exc()
+
+        return jsonify({
+
+            "success": False,
+
+            "message": str(e)
+
+        }), 500
+
+    finally:
+
+        if cursor:
+            cursor.close()
+
+        if connection:
+            connection.close()
+
+
+# ==========================================
+# UPDATE ORDER STATUS
+# ==========================================
+
+@order_bp.route("/api/orders/<int:id>", methods=["PUT"])
+def update_status(id):
+
+    connection = None
+    cursor = None
+
+    try:
+
+        data = request.get_json()
+
+        status = data.get("order_status")
+
+        if not status:
+
+            return jsonify({
+
+                "success": False,
+
+                "message": "Order status is required"
+
+            }), 400
+
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        cursor.execute("""
+            UPDATE orders
+            SET order_status=%s
+            WHERE id=%s
+        """, (status, id))
+
+        connection.commit()
+
+        if cursor.rowcount == 0:
+
+            return jsonify({
+
+                "success": False,
+
+                "message": "Order not found"
+
+            }), 404
+
+        return jsonify({
+
+            "success": True,
+
+            "message": "Status Updated Successfully"
+
+        })
+
+    except Exception as e:
+
+        if connection:
+            connection.rollback()
+
+        import traceback
+        traceback.print_exc()
+
+        return jsonify({
+
+            "success": False,
+
+            "message": str(e)
+
+        }), 500
+
+    finally:
+
+        if cursor:
+            cursor.close()
+
+        if connection:
+            connection.close()
+
+
+# ==========================================
+# TRACK ORDER
+# ==========================================
+
+@order_bp.route("/api/track/<int:id>", methods=["GET"])
+def track_order(id):
+
+    connection = None
+    cursor = None
+
+    try:
+
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        cursor.execute("""
+            SELECT *
+            FROM orders
+            WHERE id=%s
+        """, (id,))
+
+        order = cursor.fetchone()
+
+        if not order:
+
+            return jsonify({
+
+                "success": False,
+
+                "message": "Order Not Found"
+
+            }), 404
+
+        for key, value in order.items():
+
+            if isinstance(value, timedelta):
+
+                order[key] = str(value)
+
+            elif isinstance(value, (datetime, date, time)):
+
+                order[key] = value.isoformat()
+
+            elif value is None:
+
+                order[key] = ""
+
+        return jsonify({
+
+            "success": True,
+
             "order": order
 
         })
 
     except Exception as e:
 
+        import traceback
+        traceback.print_exc()
+
         return jsonify({
 
             "success": False,
+
             "message": str(e)
 
         }), 500
-  # ==========================================
-# UPDATE ORDER STATUS
+
+    finally:
+
+        if cursor:
+            cursor.close()
+
+        if connection:
+            connection.close()
+
+
+# ==========================================
+# CANCEL ORDER
 # ==========================================
 
-@order_bp.route("/api/update-order-status", methods=["POST"])
-def update_order_status():
+@order_bp.route("/api/orders/<int:id>/cancel", methods=["PUT"])
+def cancel_order(id):
+
+    connection = None
+    cursor = None
 
     try:
-
-        data = request.get_json()
-
-        order_id = data.get("order_id")
 
         connection = get_connection()
         cursor = connection.cursor()
 
-        # Get current status
-        cursor.execute(
-            "SELECT order_status FROM orders WHERE order_id=%s",
-            (order_id,)
-        )
-
-        order = cursor.fetchone()
-
-        if not order:
-
-            cursor.close()
-            connection.close()
-
-            return jsonify({
-                "success": False,
-                "message": "Order not found."
-            })
-
-        current_status = order["order_status"]
-
-        if current_status == "Preparing":
-            new_status = "Ready"
-
-        elif current_status == "Ready":
-            new_status = "Completed"
-
-        else:
-            new_status = "Completed"
-
-        # Update status
-        cursor.execute(
-            """
+        cursor.execute("""
             UPDATE orders
-            SET order_status=%s
-            WHERE order_id=%s
-            """,
-            (new_status, order_id)
-        )
+            SET order_status='Cancelled'
+            WHERE id=%s
+        """, (id,))
 
         connection.commit()
 
-        # ==========================================
-        # GET CUSTOMER DETAILS
-        # ==========================================
+        if cursor.rowcount == 0:
 
-        cursor.execute("""
-            SELECT
-                c.full_name,
-                c.mobile,
-                o.order_status
-            FROM orders o
-            JOIN customers c
-            ON o.customer_id = c.id
-            WHERE o.order_id=%s
-        """, (order_id,))
+            return jsonify({
 
-        customer = cursor.fetchone()
+                "success": False,
 
-        if customer:
+                "message": "Order not found"
 
-            name = customer["full_name"]
-            mobile = customer["mobile"]
-            status = customer["order_status"]
-
-            if status == "Preparing":
-
-                message = f"""
-🍽️ SSV HOTEL
-
-Hello {name},
-
-👨‍🍳 Your order is now being prepared.
-
-Thank you for your patience.
-"""
-
-            elif status == "Ready":
-
-                message = f"""
-🍽️ SSV HOTEL
-
-🎉 Hello {name},
-
-Your order is READY.
-
-Please collect it from the hotel.
-
-Thank you ❤️
-"""
-
-            else:
-
-                message = f"""
-🍽️ SSV HOTEL
-
-✅ Thank you {name}
-
-Your order has been completed.
-
-⭐ We'd love your feedback!
-
-Thank you for visiting SSV HOTEL ❤️
-"""
-
-            send_whatsapp(mobile, message)
-
-        cursor.close()
-        connection.close()
-
-        return jsonify({
-            "success": True,
-            "new_status": new_status
-        })
-
-    except Exception as e:
-
-        return jsonify({
-            "success": False,
-            "message": str(e)
-        }), 500
-# ==========================================
-# ADMIN - GET ALL ORDERS
-# ==========================================
-
-@order_bp.route("/api/admin/orders", methods=["GET"])
-def get_all_orders():
-
-    try:
-
-        connection = get_connection()
-        cursor = connection.cursor()
-
-        cursor.execute("""
-            SELECT
-                o.order_id,
-                c.full_name,
-                c.mobile,
-                o.quantity,
-                o.total_amount,
-                o.advance_amount,
-                o.remaining_amount,
-                o.pickup_date,
-                o.pickup_time,
-                o.payment_status,
-                o.order_status
-            FROM orders o
-            JOIN customers c
-            ON o.customer_id = c.id
-            ORDER BY o.created_at DESC
-        """)
-
-        orders = cursor.fetchall()
-
-        cursor.close()
-        connection.close()
-
-        for order in orders:
-
-            order["total_amount"] = float(order["total_amount"])
-            order["advance_amount"] = float(order["advance_amount"])
-            order["remaining_amount"] = float(order["remaining_amount"])
-            order["pickup_date"] = str(order["pickup_date"])
-            order["pickup_time"] = str(order["pickup_time"])
-            order["qr_code"] = f"/static/qr/{order['order_id']}.png"
+            }), 404
 
         return jsonify({
 
             "success": True,
-            "orders": orders
+
+            "message": "Order Cancelled Successfully"
 
         })
 
     except Exception as e:
 
-        return jsonify({
+        if connection:
+            connection.rollback()
 
-            "success": False,
-            "message": str(e)
-
-        }), 500
-    # ==========================================
-# CUSTOMER ORDER HISTORY
-# ==========================================
-
-@order_bp.route("/api/order-history", methods=["POST"])
-def order_history():
-
-    try:
-
-        data = request.get_json()
-
-        mobile = data.get("mobile")
-
-        connection = get_connection()
-        cursor = connection.cursor()
-
-        cursor.execute("""
-            SELECT
-                o.order_id,
-                o.quantity,
-                o.total_amount,
-                o.pickup_date,
-                o.pickup_time,
-                o.order_status,
-                o.payment_status
-            FROM orders o
-            JOIN customers c
-            ON o.customer_id = c.id
-            WHERE c.mobile = %s
-            ORDER BY o.created_at DESC
-        """, (mobile,))
-
-        orders = cursor.fetchall()
-
-        cursor.close()
-        connection.close()
-
-        for order in orders:
-
-            order["total_amount"] = float(order["total_amount"])
-            order["pickup_date"] = str(order["pickup_date"])
-            order["pickup_time"] = str(order["pickup_time"])
-
-        return jsonify({
-
-            "success": True,
-            "orders": orders
-
-        })
-
-    except Exception as e:
+        import traceback
+        traceback.print_exc()
 
         return jsonify({
 
             "success": False,
+
             "message": str(e)
 
         }), 500
+
+    finally:
+
+        if cursor:
+            cursor.close()
+
+        if connection:
+            connection.close()

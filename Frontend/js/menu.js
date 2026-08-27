@@ -67,7 +67,11 @@ html += `
 <div class="food-card">
 
     <img
-        src="http://127.0.0.1:5000/uploads/${item.image}"
+        src="${
+item.image
+? `http://127.0.0.1:5000/uploads/${item.image}`
+: 'images/no-image.png'
+}"
         class="food-image"
         alt="${item.item_name}">
 
@@ -81,11 +85,11 @@ html += `
             ₹${item.price}
         </div>
 
-        <button
-            class="order-btn"
-            onclick="location.href='order.html?id=${item.id}'">
-            🛒 Order Now
-        </button>
+      <button
+    class="order-btn"
+    onclick="selectItem('${item.item_name}', ${item.price})">
+    🛒 Order Now
+</button>
 
     </div>
 
@@ -95,5 +99,24 @@ html += `
     });
 
     document.getElementById("menuList").innerHTML = html;
+
+}
+// ===============================
+// SELECT ITEM
+// ===============================
+
+function selectItem(name, price) {
+
+    const selectedItem = {
+        name: name,
+        price: price
+    };
+
+    localStorage.setItem(
+        "selectedItem",
+        JSON.stringify(selectedItem)
+    );
+
+    window.location.href = "order.html";
 
 }

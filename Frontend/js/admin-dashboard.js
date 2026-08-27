@@ -112,18 +112,21 @@ async function loadOrders(){
 
     try{
 
-        const response = await fetch(
-            "http://127.0.0.1:5000/api/admin/orders"
-        );
+        const response = await 
+    fetch("http://127.0.0.1:5000/api/orders")
 
         const result = await response.json();
 
         if(result.success){
 
             const previousCount = orders.length;
+              orders = result.orders;
 
-            orders = result.orders;
-            currentPage = 1;
+const totalPages = Math.ceil(orders.length / ordersPerPage);
+
+if (currentPage > totalPages) {
+    currentPage = totalPages || 1;
+}
 
 // New order detected
 if(lastOrderCount > 0 &&
@@ -134,15 +137,15 @@ if(lastOrderCount > 0 &&
 
     showNotification(
 
-        latest.full_name +
+    latest.customer_name +
 
-        " placed " +
+    " placed " +
 
-        latest.quantity +
+    latest.quantity +
 
-        " Rotis"
+    " Rotis"
 
-    );
+);
 
 }
 
@@ -218,20 +221,21 @@ function showNotification(message){
 // ==========================================
 function renderOrders(){
 
-    ordersBody.innerHTML = "";
-
     if(orders.length === 0){
 
         ordersBody.innerHTML = `
         <tr>
-            <td colspan="11">
+            <td colspan="11" style="text-align:center;">
                 No Orders Found
             </td>
         </tr>
         `;
 
         return;
+
     }
+
+    let html = "";
 
     const start = (currentPage - 1) * ordersPerPage;
     const end = start + ordersPerPage;
@@ -240,55 +244,53 @@ function renderOrders(){
 
     pageOrders.forEach(function(order){
 
-        ordersBody.innerHTML += `
+        html += `
 
         <tr>
 
-            <td>${order.order_id}</td>
+            
 
-            <td>${order.full_name}</td>
-
-            <td>${order.mobile}</td>
+            <td>${order.order_id || order.id}</td>
+<td>${order.customer_name || "-"}</td>
+<td>${order.mobile || "-"}</td>
 
             <td>${order.quantity}</td>
 
-            <td>₹${order.total_amount}</td>
+            <td>₹${order.total_amount || 0}</td>
 
-            <td>₹${order.advance_amount}</td>
+            <td>₹${order.advance_amount || 0}</td>
 
-            <td>₹${order.remaining_amount}</td>
+            <td>₹${order.remaining_amount || 0}</td>
 
-            <td>${order.pickup_date}</td>
+            <td>${order.pickup_date || "-"}</td>
 
             <td>${order.payment_status}</td>
 
-            <td>
-
-                <span class="status ${order.order_status.toLowerCase()}">
-
-                    ${order.order_status}
-
-                </span>
-
-            </td>
+            <td>${order.order_status}</td>
 
             <td>
 
                 <button
-                class="action-btn"
-                onclick="printKitchenReceipt('${order.order_id}')">
+                class="print-btn"
+                onclick="printReceipt(${order.id})">
 
                 🖨 Print
 
                 </button>
 
-                <br><br>
+                <button
+                class="update-btn"
+                onclick="updateOrderStatus(${order.id})"
+
+                ✏ Update
+
+                </button>
 
                 <button
-                class="action-btn"
-                onclick="updateOrderStatus('${order.order_id}')">
+                class="cancel-btn"
+                onclick="cancelOrder(${order.id})">
 
-                Update
+                ❌ Cancel
 
                 </button>
 
@@ -299,6 +301,8 @@ function renderOrders(){
         `;
 
     });
+
+    ordersBody.innerHTML = html;
 
     pageNumber.textContent =
         `Page ${currentPage} of ${Math.ceil(orders.length / ordersPerPage)}`;
@@ -310,112 +314,143 @@ function renderOrders(){
 
 }
 
-
 // ==========================================
 // UPDATE ORDER STATUS
 // ==========================================
+async function updateOrderStatus(id) {
 
-async function updateOrderStatus(orderID){
+    const status = prompt(
+        "Enter Status:\nPending\nPreparing\nReady\nCompleted\nCancelled"
+    );
 
-    try{
+    if (!status) return;
+
+    try {
 
         const response = await fetch(
-            "http://127.0.0.1:5000/api/update-order-status",
+            `http://127.0.0.1:5000/api/orders/${id}`,
             {
-                method:"POST",
-
-                headers:{
-                    "Content-Type":"application/json"
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
                 },
-
-                body:JSON.stringify({
-
-                    order_id:orderID
-
+                body: JSON.stringify({
+                    order_status: status
                 })
             }
         );
 
         const result = await response.json();
 
-        if(result.success){
+        if (result.success) {
 
-           showToast("Order Updated Successfully!");
+            alert(result.message);
 
-            loadOrders();
+            await loadOrders();
 
-        }
+        } else {
 
-        else{
-
-          showToast(result.message);
+            alert(result.message);
 
         }
 
-    }
+    } catch (error) {
 
-    catch(error){
+        console.error(error);
 
-        console.log(error);
-
-        showToast("Unable to connect to server.");
+        alert("Server Error");
 
     }
-
 }
 // ==========================================
 // DASHBOARD CARDS
 // ==========================================
-function updateDashboardCards(){
+function updateDashboardCards() {
 
     totalOrders.textContent = orders.length;
 
-    const pending =
-        orders.filter(order =>
-            order.order_status === "Preparing"
-        ).length;
+    const pending = orders.filter(order =>
+        order.order_status === "Preparing"
+    ).length;
 
     pendingOrders.textContent = pending;
 
     const today = new Date().toISOString().split("T")[0];
 
-    const todayCount =
-        orders.filter(order =>
-            order.pickup_date === today
-        ).length;
+    const todayCount = orders.filter(order =>
+        order.pickup_date === today
+    ).length;
 
     todayOrders.textContent = todayCount;
 
     let revenue = 0;
 
     orders.forEach(order => {
-        revenue += Number(order.total_amount);
+        revenue += Number(order.total_amount || 0);
     });
 
     totalRevenue.textContent = "₹" + revenue;
 
-    // Total Rotis Sold
+    // Total Rotis
     let rotis = 0;
 
     orders.forEach(order => {
-        rotis += Number(order.quantity);
+        rotis += Number(order.quantity || 0);
     });
 
     totalRotis.textContent = rotis;
 
+    // Average Order
+    const avg = orders.length > 0
+        ? revenue / orders.length
+        : 0;
+
+    averageOrder.textContent =
+        "₹" + avg.toFixed(2);
+
+    // Completed Percentage
+    const completed = orders.filter(order =>
+        order.order_status === "Completed"
+    ).length;
+
+    const percent = orders.length > 0
+        ? (completed / orders.length) * 100
+        : 0;
+
+    completedPercent.textContent =
+        percent.toFixed(1) + "%";
+
+    // Best Sales Day
+    const dayRevenue = {};
+
+    orders.forEach(order => {
+
+        const day = order.pickup_date;
+
+        if (!dayRevenue[day]) {
+            dayRevenue[day] = 0;
+        }
+
+        dayRevenue[day] += Number(order.total_amount || 0);
+
+    });
+
+    let bestDay = "--";
+    let highest = 0;
+
+    for (const day in dayRevenue) {
+
+        if (dayRevenue[day] > highest) {
+
+            highest = dayRevenue[day];
+            bestDay = day;
+
+        }
+
+    }
+
+    bestSalesDay.textContent = bestDay;
 }
-// ======================================
-// Average Order Value
-// ======================================
-
-const avg =
-orders.length > 0
-? revenue / orders.length
-: 0;
-
-averageOrder.textContent =
-"₹" + avg.toFixed(2);
-
 // ======================================
 // Completed Percentage
 // ======================================
@@ -743,16 +778,15 @@ function exportToPDF(){
 
     orders.forEach(order => {
 
-        tableData.push([
-
-            order.order_id,
-            order.full_name,
-            order.mobile,
-            order.quantity,
-            "₹" + order.total_amount,
-            order.order_status
-
-        ]);
+       
+tableData.push([
+    order.order_id || order.id,
+    order.customer_name || "-",
+    order.mobile || "-",
+    order.quantity,
+    "₹" + order.total_amount,
+    order.order_status
+]);
 
     });
 
@@ -780,71 +814,73 @@ function exportToPDF(){
 // SEARCH ORDERS
 // ==========================================
 
-searchOrder.addEventListener("keyup", function(){
+searchOrder.addEventListener("keyup", function () {
 
-    const keyword =
-        this.value.toLowerCase();
+    const keyword = this.value.toLowerCase().trim();
 
-    const filteredOrders =
-        orders.filter(order =>
+    const filteredOrders = orders.filter(order => {
 
-            order.order_id.toLowerCase().includes(keyword) ||
+        const orderId =
+            String(order.order_id || order.id || "").toLowerCase();
 
-            order.mobile.includes(keyword)
+        const customerName =
+            String(order.customer_name || "").toLowerCase();
 
+        const mobile =
+            String(order.mobile || "");
+
+        return (
+            orderId.includes(keyword) ||
+            customerName.includes(keyword) ||
+            mobile.includes(keyword)
         );
+
+    });
 
     ordersBody.innerHTML = "";
 
-    if(filteredOrders.length === 0){
+    if (filteredOrders.length === 0) {
 
         ordersBody.innerHTML = `
-
-        <tr>
-
-            <td colspan="11">
-
-                No Matching Orders
-
-            </td>
-
-        </tr>
-
+            <tr>
+                <td colspan="11" style="text-align:center;">
+                    No Matching Orders
+                </td>
+            </tr>
         `;
 
         return;
-
     }
 
-    filteredOrders.forEach(function(order){
+    filteredOrders.forEach(function (order) {
 
         ordersBody.innerHTML += `
 
         <tr>
 
-            <td>${order.order_id}</td>
+            <td>${order.order_id || order.id}</td>
 
-            <td>${order.full_name}</td>
+            <td>${order.customer_name || "-"}</td>
 
-            <td>${order.mobile}</td>
+            <td>${order.mobile || "-"}</td>
 
             <td>${order.quantity}</td>
 
-            <td>₹${order.total_amount}</td>
+            <td>₹${order.total_amount || 0}</td>
 
-            <td>₹${order.advance_amount}</td>
+            <td>₹${order.advance_amount || 0}</td>
 
-            <td>₹${order.remaining_amount}</td>
+            <td>₹${order.remaining_amount || 0}</td>
 
-            <td>${order.pickup_date}</td>
+            <td>${order.pickup_date || "-"}</td>
 
-            <td>${order.payment_status}</td>
+            <td>${order.payment_status || "-"}</td>
 
             <td>
 
-                <span class="status ${order.order_status.toLowerCase()}">
+                <span class="status ${String(order.order_status || "").toLowerCase()}">
 
-                    ${order.order_status}
+                    ${order.order_status || "-"}
 
                 </span>
 
@@ -853,12 +889,12 @@ searchOrder.addEventListener("keyup", function(){
             <td>
 
                 <button
-    class="action-btn"
-    onclick="updateOrderStatus('${order.order_id}')">
+                    class="action-btn"
+                    onclick="updateOrderStatus(${order.id})">
 
-    Update
+                    Update
 
-</button>
+                </button>
 
             </td>
 
@@ -873,11 +909,11 @@ searchOrder.addEventListener("keyup", function(){
 // FILTER BY STATUS
 // ==========================================
 
-statusFilter.addEventListener("change", function(){
+statusFilter.addEventListener("change", function () {
 
     const status = this.value;
 
-    if(status === "All"){
+    if (status === "All") {
 
         renderOrders();
 
@@ -886,42 +922,53 @@ statusFilter.addEventListener("change", function(){
     }
 
     const filteredOrders = orders.filter(order =>
-
         order.order_status === status
-
     );
 
     ordersBody.innerHTML = "";
 
-    filteredOrders.forEach(function(order){
+    if (filteredOrders.length === 0) {
+
+        ordersBody.innerHTML = `
+            <tr>
+                <td colspan="11" style="text-align:center;">
+                    No Orders Found
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    filteredOrders.forEach(function (order) {
 
         ordersBody.innerHTML += `
 
         <tr>
 
-            <td>${order.order_id}</td>
+            <td>${order.order_id || order.id}</td>
 
-            <td>${order.full_name}</td>
+            <td>${order.customer_name || "-"}</td>
 
-            <td>${order.mobile}</td>
+            <td>${order.mobile || "-"}</td>
 
             <td>${order.quantity}</td>
 
-            <td>₹${order.total_amount}</td>
+            <td>₹${order.total_amount || 0}</td>
 
-            <td>₹${order.advance_amount}</td>
+            <td>₹${order.advance_amount || 0}</td>
 
-            <td>₹${order.remaining_amount}</td>
+            <td>₹${order.remaining_amount || 0}</td>
 
-            <td>${order.pickup_date}</td>
+            <td>${order.pickup_date || "-"}</td>
 
-            <td>${order.payment_status}</td>
+            <td>${order.payment_status || "-"}</td>
 
             <td>
 
-                <span class="status ${order.order_status.toLowerCase()}">
+                <span class="status ${String(order.order_status || "").toLowerCase()}">
 
-                    ${order.order_status}
+                    ${order.order_status || "-"}
 
                 </span>
 
@@ -931,7 +978,7 @@ statusFilter.addEventListener("change", function(){
 
                 <button
                     class="action-btn"
-                    onclick="updateOrderStatus('${order.order_id}')">
+                    onclick="updateOrderStatus(${order.id})">
 
                     Update
 
@@ -1489,7 +1536,7 @@ body{
 
 <span class="title">Order ID</span>
 
-<span>${order.order_id}</span>
+<span>${order.order_id || order.id}</span>
 
 </div>
 
@@ -1497,7 +1544,7 @@ body{
 
 <span class="title">Customer</span>
 
-<span>${order.full_name}</span>
+<span>${order.customer_name || "-"}</span>
 
 </div>
 

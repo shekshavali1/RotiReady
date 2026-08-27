@@ -14,10 +14,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="CSS/style.css">
-
-<link rel="stylesheet" href="CSS/admin-dashboard.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/admin-dashboard.css">
 <link rel="stylesheet"
 href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 </head>
@@ -225,12 +223,10 @@ DASHBOARD CHARTS
 <select id="statusFilter">
 
     <option value="All">All Orders</option>
-
-    <option value="Preparing">Preparing</option>
-
-    <option value="Ready">Ready</option>
-
-    <option value="Completed">Completed</option>
+<option value="Pending">Pending</option>
+<option value="Preparing">Preparing</option>
+<option value="Ready">Ready</option>
+<option value="Cancelled">Cancelled</option>
 
 </select>
 <input
@@ -267,6 +263,8 @@ DASHBOARD CHARTS
                 <th>Status</th>
 
                 <th>Action</th>
+
+                
 
             </tr>
 

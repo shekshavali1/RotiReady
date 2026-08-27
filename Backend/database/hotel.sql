@@ -41,44 +41,31 @@ CREATE TABLE customers (
 -- ==========================================
 -- ORDERS
 -- ==========================================
-
 CREATE TABLE orders (
 
     id INT AUTO_INCREMENT PRIMARY KEY,
 
-    order_id VARCHAR(20) UNIQUE NOT NULL,
+    customer_name VARCHAR(100) NOT NULL,
 
-    customer_id INT NOT NULL,
+    mobile VARCHAR(20) NOT NULL,
+
+    item_name VARCHAR(100) NOT NULL,
 
     quantity INT NOT NULL,
 
     total_amount DECIMAL(10,2) NOT NULL,
 
-    advance_amount DECIMAL(10,2) NOT NULL,
-
-    remaining_amount DECIMAL(10,2) NOT NULL,
-
-    pickup_date DATE NOT NULL,
-
-    pickup_time TIME NOT NULL,
-
-    instructions TEXT,
-
-    payment_status ENUM(
-        'Pending',
-        'Paid'
-    ) DEFAULT 'Pending',
+    payment_status ENUM('Pending','Paid') DEFAULT 'Pending',
 
     order_status ENUM(
+        'Pending',
         'Preparing',
         'Ready',
-        'Completed'
-    ) DEFAULT 'Preparing',
+        'Completed',
+        'Cancelled'
+    ) DEFAULT 'Pending',
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-    FOREIGN KEY (customer_id)
-    REFERENCES customers(id)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 
 );
 
@@ -90,7 +77,7 @@ CREATE TABLE payments (
 
     id INT AUTO_INCREMENT PRIMARY KEY,
 
-    order_id VARCHAR(20) NOT NULL,
+    order_id INT NOT NULL,
 
     transaction_id VARCHAR(100),
 
@@ -101,7 +88,33 @@ CREATE TABLE payments (
     payment_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (order_id)
-    REFERENCES orders(order_id)
+    REFERENCES orders(id)
+
+);
+
+
+-- ==========================================
+-- FEEDBACK
+-- ==========================================
+
+CREATE TABLE feedback (
+
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+    order_id INT NOT NULL,
+
+    customer_name VARCHAR(100),
+
+    mobile VARCHAR(20),
+
+    rating INT,
+
+    review TEXT,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (order_id)
+    REFERENCES orders(id)
 
 );
 

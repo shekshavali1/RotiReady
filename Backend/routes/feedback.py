@@ -8,7 +8,6 @@ feedback_bp = Blueprint("feedback_bp", __name__)
 def save_feedback():
 
     try:
-
         data = request.get_json()
 
         order_id = data.get("order_id")
@@ -16,6 +15,12 @@ def save_feedback():
         mobile = data.get("mobile")
         rating = data.get("rating")
         review = data.get("review")
+
+        if not order_id or not customer_name or rating is None:
+            return jsonify({
+                "success": False,
+                "message": "Required fields are missing."
+            }), 400
 
         conn = get_connection()
         cursor = conn.cursor()
@@ -30,8 +35,7 @@ def save_feedback():
                 review
             )
             VALUES (%s,%s,%s,%s,%s)
-        """,
-        (
+        """, (
             order_id,
             customer_name,
             mobile,
@@ -50,8 +54,7 @@ def save_feedback():
         })
 
     except Exception as e:
-
         return jsonify({
             "success": False,
             "message": str(e)
-        })
+        }), 500

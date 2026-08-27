@@ -18,10 +18,10 @@ def get_menu():
         cursor = connection.cursor()
 
         cursor.execute("""
-            SELECT *
-            FROM menu_items
-            ORDER BY category, id
-        """)
+SELECT *
+FROM menu_items
+ORDER BY category ASC, item_name ASC
+""")
 
         menu = cursor.fetchall()
 
@@ -141,9 +141,7 @@ def delete_menu(id):
             "message": str(e)
         }), 500
     
-    # ==========================
-# UPDATE MENU ITEM
-# ==========================
+  
 # ==========================
 # UPDATE MENU ITEM
 # ==========================
@@ -153,7 +151,7 @@ def update_menu(id):
     try:
 
         item_name = request.form["item_name"]
-        price = request.form["price"]
+        price=float(request.form["price"])
         category = request.form["category"]
         status = request.form["status"]
 

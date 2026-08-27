@@ -47,7 +47,7 @@ def admin_login():
         return jsonify({
             "success": False,
             "message": str(e)
-        })
+        }), 500
     # ==========================================
 # UPDATE ORDER STATUS
 # ==========================================
@@ -61,9 +61,9 @@ def update_order_status(order_id):
         cursor = connection.cursor()
 
         cursor.execute(
-            "SELECT order_status FROM orders WHERE order_id=%s",
-            (order_id,)
-        )
+    "SELECT order_status FROM orders WHERE id=%s",
+    (order_id,)
+)
 
         result = cursor.fetchone()
 
@@ -79,26 +79,27 @@ def update_order_status(order_id):
 
         current_status = result["order_status"]
 
-        if current_status == "Preparing":
+        if current_status == "Pending":
 
-            new_status = "Ready"
+         new_status = "Preparing"
 
-        elif current_status == "Ready":
+        elif current_status == "Preparing":
 
-            new_status = "Completed"
+         new_status = "Ready"
 
         else:
 
-            new_status = "Completed"
+         new_status = "Ready"
 
         cursor.execute(
-            """
-            UPDATE orders
-            SET order_status=%s
-            WHERE order_id=%s
-            """,
-            (new_status, order_id)
-        )
+    """
+    UPDATE orders
+    SET order_status=%s
+    WHERE id=%s
+    """,
+    (new_status, order_id)
+)
+            
 
         connection.commit()
 
@@ -123,7 +124,7 @@ def update_order_status(order_id):
 
             "message": str(e)
 
-        })
+        }), 500
     
 
 # ==========================================

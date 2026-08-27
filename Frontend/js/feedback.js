@@ -14,14 +14,11 @@ if (!order) {
 // SHOW ORDER DETAILS
 // ==========================================
 
-document.getElementById("fbOrderID").textContent =
+document.getElementById("feedbackOrderID").textContent =
     order.orderID || "-";
 
-document.getElementById("fbCustomer").textContent =
-    order.customerName;
-
-document.getElementById("fbStatus").textContent =
-    order.orderStatus;
+document.getElementById("feedbackCustomer").textContent =
+    order.customerName || "-";
 
 // ==========================================
 // STAR RATING
@@ -51,7 +48,8 @@ stars.forEach((star) => {
 // SUBMIT FEEDBACK
 // ==========================================
 
-const submitBtn = document.getElementById("submitFeedback");
+const submitBtn =
+    document.getElementById("submitReviewBtn");
 
 submitBtn.addEventListener("click", async function () {
 

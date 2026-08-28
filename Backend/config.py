@@ -1,19 +1,13 @@
 import os
 import pymysql
 
-
 def get_connection():
 
-    host = os.environ.get("MYSQLHOST")
-    user = os.environ.get("MYSQLUSER")
-    password = os.environ.get("MYSQLPASSWORD")
-    database = os.environ.get("MYSQLDATABASE")
-    port = int(os.environ.get("MYSQLPORT", "3306"))
-
-    print("DB_HOST:", host)
-    print("DB_USER:", user)
-    print("DB_NAME:", database)
-    print("DB_PORT:", port)
+    host = os.environ.get("DB_HOST")
+    user = os.environ.get("DB_USER")
+    password = os.environ.get("DB_PASSWORD")
+    database = os.environ.get("DB_NAME")
+    port = int(os.environ.get("DB_PORT", "3306"))
 
     return pymysql.connect(
         host=host,

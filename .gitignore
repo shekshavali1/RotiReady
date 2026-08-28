@@ -13,3 +13,5 @@ Backend/static/qr/
 
 # Node modules
 node_modules/
+__pycache__/
+*.pyc
